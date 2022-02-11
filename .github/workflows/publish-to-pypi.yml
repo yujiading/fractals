@@ -1,0 +1,16 @@
+name: Publish Python 🐍 distributions 📦 to PyPI
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and publish to pypi
+        uses: JRubics/poetry-publish@v1.10
+        with:
+          pypi_token: ${{ secrets.pypi_api_token }}

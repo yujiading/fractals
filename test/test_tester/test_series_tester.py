@@ -1,8 +1,8 @@
 import pprint as pp
 
-import pandas as pd
 import numpy as np
-from tester.library.series_tester import SeriesTester
+
+from fractals.tester.series_tester import SeriesTester
 
 
 def test_tester():
@@ -14,8 +14,11 @@ def test_tester():
     h_fbm = 1
     ret, sig2, h = tester.is_fbm(h=h_fbm, sig2=None)
     pp.pprint(f"is fbm: {ret} | sigma2: {sig2} | h: {h}")
-    # try all h, sig2=1
+    # try all hs, sig2=1
     ret, sig2, h = tester.is_fbm(h=None, sig2=1)
+    pp.pprint(f"is fbm: {ret} | sigma2: {sig2} | h: {h}")
+    # try certain hs, sig2=1
+    ret, sig2, h = tester.is_fbm(h=[0.1, 0.2], sig2=1)
     pp.pprint(f"is fbm: {ret} | sigma2: {sig2} | h: {h}")
 
     ## test if mbm

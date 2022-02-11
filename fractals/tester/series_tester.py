@@ -3,8 +3,8 @@ import pandas as pd
 from tqdm import tqdm
 from typing import Union, List
 
-from tester.library.critical_surface import CriticalSurfaceFBM, CriticalSurfaceMFBM
-from tester.library.estimate_sigma import EstimateSigma
+from fractals.tester.critical_surface import CriticalSurfaceFBM, CriticalSurfaceMFBM
+from fractals.tester.estimate_sigma import EstimateSigma
 
 
 class SeriesTester:
