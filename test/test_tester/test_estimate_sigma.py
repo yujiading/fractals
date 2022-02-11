@@ -1,4 +1,4 @@
-from fractals.tester.estimate_sigma import EstimateSigma
+from fractal_analysis.tester.estimate_sigma import EstimateSigma
 
 
 def test_estimate_sigma():

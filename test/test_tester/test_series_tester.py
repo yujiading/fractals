@@ -2,7 +2,7 @@ import pprint as pp
 
 import numpy as np
 
-from fractals.tester.series_tester import SeriesTester
+from fractal_analysis.tester.series_tester import SeriesTester
 
 
 def test_tester():

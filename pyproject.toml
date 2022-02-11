@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fractals"
+name = "fractal-analysis"
 version = "0.1.0"
 description = ""
 authors = ["yujiading <yujia.ding@cgu.edu>"]

@@ -1,4 +1,4 @@
-# fractals
+# Fractal Analysis
 Fractal and multifractal methods, including
 
 - fractional Brownian motion (FBM) tester
@@ -7,19 +7,19 @@ Fractal and multifractal methods, including
 ## To install
 To get started, simply do:
 ```
-pip install fractals
+pip install fractal-analysis
 ```
 or check out the code from out GitHub repository.
 
 You can now use the package in Python with:
 ```
-from fractals import tester
+from fractal_analysis import tester
 ```
 
 ## Examples
 Import:
 ```
-from fractals.tester.series_tester import SeriesTester
+from fractal_analysis.tester.series_tester import SeriesTester
 ```
 To test a series ```series```:
 ```
