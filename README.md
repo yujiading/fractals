@@ -19,7 +19,7 @@ from fractals import tester
 ## Examples
 Import:
 ```
-import xxxxx
+from fractals.tester.series_tester import SeriesTester
 ```
 To test a series ```series```:
 ```
