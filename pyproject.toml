@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fractal-analysis"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["yujiading <yujia.ding@cgu.edu>"]
 readme = "README.md"
@@ -15,7 +15,6 @@ include = [
 python = "~3.9"
 pandas = "^1.4.0"
 scipy = "^1.8.0"
-tqdm = "^4.62.3"
 
 
 [tool.poetry.dev-dependencies]

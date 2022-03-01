@@ -19,41 +19,41 @@ from fractal_analysis import tester
 ## Examples
 Import:
 ```
-from fractal_analysis.tester.series_tester import SeriesTester
+from fractal_analysis.tester.series_tester import MBMSeriesTester, FBMSeriesTester
+from fractal_analysis.tester.critical_surface import CriticalSurfaceFBM, CriticalSurfaceMFBM
 ```
-To test a series ```series```:
+To test if a series ```series``` is FBM, one needs to use ```CriticalSurfaceFBM``` with length of the series ```N```
+and the significance level ```alpha``` (look at quantiles of order ```alpha/2``` and ```1 − alpha/2```) 
 ```
-tester = SeriesTester(x=series)
+fbm_tester = FBMSeriesTester(critical_surface=CriticalSurfaceFBM(N=N, alpha=0.05))
 ```
 
-To test if the series is FBM with holder exponent 0.3 and use auto estimated sigma square:
+To test if the series is FBM with holder exponent 0.3 and use auto estimated sigma square (set ```sig2=None```):
 
 ```
-is_fbm, sig2, h = tester.is_fbm(h=0.3, sig2=None)
+is_fbm, sig2 = fbm_tester.test(h=0.3, x=series, sig2=None)
 ```
 If the output contains, for example:
 > Bad auto sigma square calculated with error 6.239236333681868. Suggest to give sigma square and rerun.
 
 The auto sigma square estimated is not accurate. One may want to manually choose a sigma square and rerun. For example:
 ```
-is_fbm, sig2, h = tester.is_fbm(h=0.3, sig2=1)
+is_fbm, sig2 = fbm_tester.test(h=0.3, x=series, sig2=1)
 ```
-One can also test the series without specified holder exponent through either setting ```None``` to ```h``` that searches the correct holder exponent from 0.1 to 1 with step 0.1, or entering customized values. I.e.,
+To test if the series is MBM, one needs to use ```CriticalSurfaceMFBM``` with length of the series ```N```
+and the significance level ```alpha``` (look at quantiles of order ```alpha/2``` and ```1 − alpha/2```) 
 ```
-is_fbm, sig2, h = tester.is_fbm(h=None, sig2=None)
+mbm_tester = MBMSeriesTester(critical_surface=CriticalSurfaceMFBM(N=N, alpha=0.05))
 ```
-or
+To test if the series is MBM with a given holder exponent series ```h_mbm_series``` and use auto estimated sigma square:
 ```
-is_fbm, sig2, h = tester.is_fbm(h=[0,1, 0.2, 0.3], sig2=None)
+is_mbm, sig2 = mbm_tester.test(h=h_mbm_series, x=series, sig2=None)
 ```
-To test if the series is MBM with a given holdr exponent series ```h_mbm``` and use auto estimated sigma square:
-```
-ret, sig2 = tester.is_mbm(h=h_mbm, sig2=None)
-```
-If the following appears:
->Bad estimated sigma square: 0.0. Suggest to give sigma square and rerun.
+Be aware that ```MBMSeriesTester``` requires ```len(h_mbm_series)==len(series)```.
 
-One may want to manually choose a sigma square and rerun. For example:
-```
-ret, sig2 = tester.is_mbm(h=h_mbm, sig2=1)
-```
+## Use of cache
+Use caching to speed up the testing process. If the series ```x``` for testing is unchanged and multiple ```h``` 
+and/or ```sig2``` are used, one may want to set 
+```is_cache_stat=True``` to allow cache variable ```stat```. If ```h``` and ```sig2``` are unchanged and multiple ```x```
+are used, one may want to set ```is_cache_quantile=True``` to allow cache variable ```quantile```.
+

@@ -21,6 +21,8 @@ class EstimateSigma:
         self.Y = [item ** 2 for item in series]  # Y is series square, p4 eq10
         self.n = len(series) - 1  # N=n  p5 line1
         self.h_series = h_series
+        if len(self.h_series) != len(series):
+            raise ValueError('h series and series should have the same length.')
 
     def C_integrant(self, eta: float, s: int):
         exp_ = cmath.exp(complex(imag=eta)) - 1
@@ -31,14 +33,15 @@ class EstimateSigma:
     def C(self, s: int, tol=1e-3):  # p7 eq22
         limit = 50
         max_ = 5
+        text = None
         for i in range(max_):
             ret = integrate.quad(self.C_integrant, -np.inf, 0, args=(s,), limit=limit, full_output=1)
             ret = ret + integrate.quad(self.C_integrant, 0, np.inf, args=(s,), limit=limit, full_output=1)
             if ret[1] <= tol:
-                return ret[0]
+                return ret[0], text
             limit += 50
-        print(f'Bad auto sigma square calculated with error {ret[1]}. Suggest to give sigma square and rerun.')
-        return ret[0]
+        text = f'Bad auto sigma square calculated with error {ret[1]}. Suggest to give sigma square and rerun.'
+        return ret[0], text
 
     @property
     def V_bar(self):
@@ -46,10 +49,14 @@ class EstimateSigma:
         p6 thm2.1 eq20
         h==1
         """
+        text = None
         sum_ = 0
         for i in range(self.n - 1):
-            sum_ += (self.Y[i + 1] - self.Y[i]) ** 2 / self.C(i) / self.n ** (
+            C, text = self.C(s=i)
+            sum_ += (self.Y[i + 1] - self.Y[i]) ** 2 / C / self.n ** (
                     -2 * self.h_series[i])
+        if text:
+            print(text)
         return sum_ / self.n
 
     @property
