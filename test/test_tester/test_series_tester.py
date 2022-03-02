@@ -53,5 +53,23 @@ def test_tester_mbm_standard_brownian_motion():
     # Print the result
     pp.pprint(f"is mbm: {is_mbm} | sigma2: {sig2}")
 
-
+def test_tester_fbm_constant_with_cache():
+    # Set series length
+    N = 100
+    # Generate a constant series
+    series = np.ones(N)
+    # Test if it is a FBM. Alpha is the significance level (look at quantiles of order alpha/2 and 1 − alpha/2)
+    fbm_tester = FBMSeriesTester(critical_surface=CriticalSurfaceFBM(N=N, alpha=0.05), is_cache_stat=False, is_cache_quantile=True)
+    # Use holder exponent 0.9 and auto estimated sigma square (set sig2=None)
+    is_fbm, sig2 = fbm_tester.test(h=0.9, x=series, sig2=None)
+    # Print the result
+    pp.pprint(f"is fbm: {is_fbm} | sigma2: {sig2}")
+    # Use holder exponent 0.9 and auto estimated sigma square (set sig2=None)
+    is_fbm, sig2 = fbm_tester.test(h=0.9, x=series, sig2=None)
+    # Print the result
+    pp.pprint(f"is fbm: {is_fbm} | sigma2: {sig2}")
+    # Use holder exponent 0.9 and auto estimated sigma square (set sig2=None)
+    is_fbm, sig2 = fbm_tester.test(h=0.9, x=series, sig2=None)
+    # Print the result
+    pp.pprint(f"is fbm: {is_fbm} | sigma2: {sig2}")
 

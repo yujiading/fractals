@@ -50,7 +50,7 @@ class SeriesTester:
                 raise ValueError("h must be List or np.ndarray or pd.Series for MBM tester.")
         else:
             raise ValueError("Critical surface type is not found.")
-        if self.is_cache_stat and series == self._old_series:
+        if self.is_cache_stat and np.array_equal(series, self._old_series):
             stat = self._stat
         else:
             stat = np.dot(series.T.dot(self.critical_surface.matrix_A_k), series)
@@ -59,7 +59,7 @@ class SeriesTester:
                 self._stat = stat
         if sig2 is None:
             sig2 = EstimateSigma(series=series, h_series=h_series).theta_hat_square
-        if self.is_cache_quantile and sig2 == self._old_sig2 and h == self._old_h:
+        if self.is_cache_quantile and np.array_equal(sig2, self._old_sig2) and np.array_equal(h, self._old_h):
             quantile = self._quantile
         else:
             if isinstance(h, pd.Series):

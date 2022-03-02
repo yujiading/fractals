@@ -55,5 +55,8 @@ Be aware that ```MBMSeriesTester``` requires ```len(h_mbm_series)==len(series)``
 Use caching to speed up the testing process. If the series ```x``` for testing is unchanged and multiple ```h``` 
 and/or ```sig2``` are used, one may want to set 
 ```is_cache_stat=True``` to allow cache variable ```stat```. If ```h``` and ```sig2``` are unchanged and multiple ```x```
-are used, one may want to set ```is_cache_quantile=True``` to allow cache variable ```quantile```.
+are used, one may want to set ```is_cache_quantile=True``` to allow cache variable ```quantile```. For example:
+```
+mbm_tester = MBMSeriesTester(critical_surface=CriticalSurfaceMFBM(N=N, alpha=0.05), is_cache_stat=True, is_cache_quantile=False)
+```
 
