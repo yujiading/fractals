@@ -83,7 +83,7 @@ class CriticalSurfaceFBM(CriticalSurfaceBrownianMotion):
             r_M_k = r_k
         return r_M_k
 
-    def _autocovariance_matrix(self, sig2: float, H: float):
+    def _autocovariance_matrix(self, sig2: float, H: float): #todo: sig2 for FBM is add on noise, sig2 for MBm is scaler
         if not isinstance(H, (float, int)) or H > 1 or H < 0:
             raise ValueError(f'H is {H}, but it needs to be a float in [0,1].')
         Sigma = np.zeros((self.N, self.N))
