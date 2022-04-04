@@ -36,11 +36,11 @@ class CriticalSurfaceBrownianMotion(ABC):
         return A_k
 
     @abstractmethod
-    def _autocovariance_matrix(self, sig2: float, H: Union[List[float], np.ndarray, float]):
+    def _autocovariance_matrix(self, sig2: float, H: Union[List[float], np.ndarray, float], add_on_sig2: float):
         pass
 
-    def _eigenvalues(self, sig2: float, H: Union[List[float], np.ndarray, float]):
-        Sigma: np.ndarray = self._autocovariance_matrix(sig2=sig2, H=H)
+    def _eigenvalues(self, sig2: float, H: Union[List[float], np.ndarray, float], add_on_sig2: float):
+        Sigma: np.ndarray = self._autocovariance_matrix(sig2=sig2, H=H, add_on_sig2=add_on_sig2)
         square_root_Sigma: np.ndarray = sqrtm(Sigma)
         A_k = self.matrix_A_k
         mat = square_root_Sigma.dot(A_k)
@@ -48,13 +48,13 @@ class CriticalSurfaceBrownianMotion(ABC):
         eigenvalues, _ = linalg.eig(mat)
         return eigenvalues
 
-    def _generalized_chi2(self, sig2, H: Union[List[float], np.ndarray, float]):
-        eigenvalues = self._eigenvalues(sig2=sig2, H=H)
+    def _generalized_chi2(self, sig2, H: Union[List[float], np.ndarray, float], add_on_sig2: float):
+        eigenvalues = self._eigenvalues(sig2=sig2, H=H, add_on_sig2=add_on_sig2)
         stat = np.array(eigenvalues.dot(self.chi2))
         return stat
 
-    def quantile(self, sig2, H: Union[List[float], np.ndarray, float]):
-        dist = self._generalized_chi2(sig2=sig2, H=H)
+    def quantile(self, sig2, H: Union[List[float], np.ndarray, float], add_on_sig2: float = 0):
+        dist = self._generalized_chi2(sig2=sig2, H=H, add_on_sig2=add_on_sig2)
         quantile = [0, 0]
         quantile[0] = np.percentile(a=dist, q=100 * self.alpha / 2)
         quantile[1] = np.percentile(a=dist, q=100 - 100 * self.alpha / 2)
@@ -73,24 +73,24 @@ class CriticalSurfaceFBM(CriticalSurfaceBrownianMotion):
         twoH = 2 * H
         return 0.5 * ((k + 1) ** twoH + abs(k - 1) ** twoH - 2 * k ** twoH)
 
-    def _r_M_k(self, k: int, sig2: float, H: float):
+    def _r_M_k(self, k: int, add_on_sig2: float, H: float):
         r_k = self._r_k(k=k, H=H)
         if k == 0:
-            r_M_k = r_k + 2 * sig2
+            r_M_k = r_k + 2 * add_on_sig2
         elif k == 1:
-            r_M_k = r_k - sig2
+            r_M_k = r_k - add_on_sig2
         else:
             r_M_k = r_k
         return r_M_k
 
-    def _autocovariance_matrix(self, sig2: float, H: float): #todo: sig2 for FBM is add on noise, sig2 for MBm is scaler
+    def _autocovariance_matrix(self, sig2: float, add_on_sig2: float, H: float):
         if not isinstance(H, (float, int)) or H > 1 or H < 0:
             raise ValueError(f'H is {H}, but it needs to be a float in [0,1].')
         Sigma = np.zeros((self.N, self.N))
         for i in range(self.N):
             for j in range(self.N):
                 k = abs(i - j)
-                Sigma[i, j] = self._r_M_k(k=k, sig2=sig2, H=H)
+                Sigma[i, j] = sig2 * self._r_M_k(k=k, add_on_sig2=add_on_sig2, H=H)
         return Sigma
 
 
@@ -107,7 +107,7 @@ class CriticalSurfaceMFBM(CriticalSurfaceBrownianMotion):
         sin_ = math.sin(math.pi * alpha / 2)
         return math.pi / gam_ / sin_
 
-    def _autocovariance_matrix(self, sig2, H: Union[List, np.ndarray]):
+    def _autocovariance_matrix(self, sig2: float, H: Union[List, np.ndarray], add_on_sig2=None):
         if isinstance(H, (float, int)):
             raise ValueError('H needs to be a list for MBM.')
         Sigma = np.zeros((self.N, self.N))
