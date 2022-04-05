@@ -32,15 +32,16 @@ class CriticalSurfaceBrownianMotion(ABC):
                 if abs(i - j) == self.k:
                     A_k[i, j] = 0.5 / (self.N - self.k)
                 # elif i == j:
-                #     A_k[i, j] = 1 / self.N
+                #     A_k[i, j] = 1 / self.N #todo add k=0 case
         return A_k
 
     @abstractmethod
-    def _autocovariance_matrix(self, sig2: float, H: Union[List[float], np.ndarray, float], add_on_sig2: float):
+    def _autocovariance_matrix_increment(self, sig2: float, H: Union[List[float], np.ndarray, float],
+                                         add_on_sig2: float):
         pass
 
     def _eigenvalues(self, sig2: float, H: Union[List[float], np.ndarray, float], add_on_sig2: float):
-        Sigma: np.ndarray = self._autocovariance_matrix(sig2=sig2, H=H, add_on_sig2=add_on_sig2)
+        Sigma: np.ndarray = self._autocovariance_matrix_increment(sig2=sig2, H=H, add_on_sig2=add_on_sig2)
         square_root_Sigma: np.ndarray = sqrtm(Sigma)
         A_k = self.matrix_A_k
         mat = square_root_Sigma.dot(A_k)
@@ -83,7 +84,7 @@ class CriticalSurfaceFBM(CriticalSurfaceBrownianMotion):
             r_M_k = r_k
         return r_M_k
 
-    def _autocovariance_matrix(self, sig2: float, add_on_sig2: float, H: float):
+    def _autocovariance_matrix_increment(self, sig2: float, add_on_sig2: float, H: float):
         if not isinstance(H, (float, int)) or H > 1 or H < 0:
             raise ValueError(f'H is {H}, but it needs to be a float in [0,1].')
         Sigma = np.zeros((self.N, self.N))
@@ -102,18 +103,49 @@ class CriticalSurfaceMFBM(CriticalSurfaceBrownianMotion):
     """
 
     @functools.lru_cache(maxsize=128)
-    def _D(self, alpha):
-        gam_ = math.gamma(alpha + 1)
-        sin_ = math.sin(math.pi * alpha / 2)
-        return math.pi / gam_ / sin_
+    def _D(self, x: float, y: float):
+        gam_xy = math.gamma(x + y + 1)
+        gam_x = math.gamma(2 * x + 1)
+        gam_y = math.gamma(2 * y + 1)
+        sin_xy = math.sin(math.pi * (x + y) / 2)
+        sin_x = math.sin(math.pi * x)
+        sin_y = math.sin(math.pi * y)
+        return math.sqrt(gam_x * gam_y * sin_x * sin_y) / 2 / gam_xy / sin_xy
 
-    def _autocovariance_matrix(self, sig2: float, H: Union[List, np.ndarray], add_on_sig2=None):
-        if isinstance(H, (float, int)):
-            raise ValueError('H needs to be a list for MBM.')
+    def _autocovariance_matrix(self, delta_t: int, delta_s: int, H: Union[List, np.ndarray]):
         Sigma = np.zeros((self.N, self.N))
         for i in range(self.N):
             for j in range(self.N):
-                h = H[i] + H[j]
-                D = self._D(alpha=h)
-                Sigma[i, j] = sig2 * D * ((i + 1) ** h + (j + 1) ** h - abs(i - j) ** h)
+                ht_idx = min(self.N - 1, i + delta_t)
+                hs_idx = min(self.N - 1, j + delta_s)
+                ht = H[ht_idx]
+                hs = H[hs_idx]
+                h = ht + hs
+                D = self._D(x=ht, y=hs)
+                Sigma[i, j] = D * (
+                        (i + delta_t + 1) ** h + (j + delta_s + 1) ** h - abs(i + delta_t - j - delta_s) ** h)
         return Sigma
+
+    def _autocovariance_matrix_increment(self, sig2: float, H: Union[List, np.ndarray], add_on_sig2=None):
+        if isinstance(H, (float, int)):
+            raise ValueError('H needs to be a list for MBM.')
+        cov_t1_s1 = self._autocovariance_matrix(delta_t=1, delta_s=1, H=H)
+        cov_t1_s0 = self._autocovariance_matrix(delta_t=1, delta_s=0, H=H)
+        cov_t0_s1 = self._autocovariance_matrix(delta_t=0, delta_s=1, H=H)
+        cov_t0_s0 = self._autocovariance_matrix(delta_t=0, delta_s=0, H=H)
+        return cov_t1_s1 - cov_t1_s0 - cov_t0_s1 + cov_t0_s0
+
+    # def _autocovariance_matrix_increment(self, sig2: float, H: Union[List, np.ndarray], add_on_sig2=None):
+    #     if isinstance(H, (float, int)):
+    #         raise ValueError('H needs to be a list for MBM.')
+    #     Sigma = np.zeros((self.N, self.N))
+    #     for i in range(self.N):
+    #         for j in range(self.N):
+    #             h1 = H[i]
+    #             h2 = H[j]
+    #             h = h1 + h2
+    #             # D = self._D(alpha=h)
+    #             D = self._D(x=h1, y=h2)
+    #             k = abs(i - j)
+    #             Sigma[i, j] = sig2 * D * ((i + 1) ** h + (j + 1) ** h - abs(i - j) ** h)
+    #     return Sigma

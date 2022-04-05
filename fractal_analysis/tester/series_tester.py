@@ -33,7 +33,8 @@ class SeriesTester:
             h: holder exponent, same length as x if test MBM, float in (0,1) if test FBM
             sig2: sigma square, if None, use auto-estimated sigma
         """
-        series = np.array(x)
+        # series = np.array(x)
+        series = np.diff(x, prepend=0)
         if isinstance(self.critical_surface, CriticalSurfaceFBM):
             if not isinstance(h, (float, int)):
                 raise ValueError("h must be float for FBM tester.")
