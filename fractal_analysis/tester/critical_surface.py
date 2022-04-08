@@ -17,12 +17,14 @@ class CriticalSurfaceBrownianMotion(ABC):
                  N: int,
                  alpha: float = 0.05,
                  k: int = 1,
-                 chi2_trials: int = 100000):
+                 chi2_trials: int = 100000,
+                 is_increment_series: bool = True):
         self.N = N
         self.alpha = alpha
         self.k = k
         np.random.seed(6)
         self.chi2 = np.random.chisquare(df=1, size=(self.N, chi2_trials))
+        self.is_increment_series = is_increment_series
 
     @functools.cached_property
     def matrix_A_k(self):
@@ -40,8 +42,15 @@ class CriticalSurfaceBrownianMotion(ABC):
                                          add_on_sig2: float):
         pass
 
+    @abstractmethod
+    def _autocovariance_matrix(self, sig2: float, H: Union[List[float], np.ndarray, float], add_on_sig2: float):
+        pass
+
     def _eigenvalues(self, sig2: float, H: Union[List[float], np.ndarray, float], add_on_sig2: float):
-        Sigma: np.ndarray = self._autocovariance_matrix_increment(sig2=sig2, H=H, add_on_sig2=add_on_sig2)
+        if self.is_increment_series:
+            Sigma: np.ndarray = self._autocovariance_matrix_increment(sig2=sig2, H=H, add_on_sig2=add_on_sig2)
+        else:
+            Sigma: np.ndarray = self._autocovariance_matrix(sig2=sig2, H=H, add_on_sig2=add_on_sig2)
         square_root_Sigma: np.ndarray = sqrtm(Sigma)
         A_k = self.matrix_A_k
         mat = square_root_Sigma.dot(A_k)
@@ -84,6 +93,9 @@ class CriticalSurfaceFBM(CriticalSurfaceBrownianMotion):
             r_M_k = r_k
         return r_M_k
 
+    def _autocovariance_matrix(self, sig2: float, H: float, add_on_sig2: float):
+        raise ValueError("No non increment version exists, use is_increment_series=True for FBM testing.")
+
     def _autocovariance_matrix_increment(self, sig2: float, add_on_sig2: float, H: float):
         if not isinstance(H, (float, int)) or H > 1 or H < 0:
             raise ValueError(f'H is {H}, but it needs to be a float in [0,1].')
@@ -112,7 +124,8 @@ class CriticalSurfaceMFBM(CriticalSurfaceBrownianMotion):
         sin_y = math.sin(math.pi * y)
         return math.sqrt(gam_x * gam_y * sin_x * sin_y) / 2 / gam_xy / sin_xy
 
-    def _autocovariance_matrix(self, delta_t: int, delta_s: int, H: Union[List, np.ndarray]):
+    def _autocovariance_matrix(self, sig2: float, H: Union[List, np.ndarray], add_on_sig2=None, delta_t: int = 0,
+                               delta_s: int = 0):
         Sigma = np.zeros((self.N, self.N))
         for i in range(self.N):
             for j in range(self.N):
@@ -124,28 +137,13 @@ class CriticalSurfaceMFBM(CriticalSurfaceBrownianMotion):
                 D = self._D(x=ht, y=hs)
                 Sigma[i, j] = D * (
                         (i + delta_t + 1) ** h + (j + delta_s + 1) ** h - abs(i + delta_t - j - delta_s) ** h)
-        return Sigma
+        return sig2 * Sigma
 
     def _autocovariance_matrix_increment(self, sig2: float, H: Union[List, np.ndarray], add_on_sig2=None):
         if isinstance(H, (float, int)):
             raise ValueError('H needs to be a list for MBM.')
-        cov_t1_s1 = self._autocovariance_matrix(delta_t=1, delta_s=1, H=H)
-        cov_t1_s0 = self._autocovariance_matrix(delta_t=1, delta_s=0, H=H)
-        cov_t0_s1 = self._autocovariance_matrix(delta_t=0, delta_s=1, H=H)
-        cov_t0_s0 = self._autocovariance_matrix(delta_t=0, delta_s=0, H=H)
+        cov_t1_s1 = self._autocovariance_matrix(delta_t=1, delta_s=1, H=H, sig2=sig2)
+        cov_t1_s0 = self._autocovariance_matrix(delta_t=1, delta_s=0, H=H, sig2=sig2)
+        cov_t0_s1 = self._autocovariance_matrix(delta_t=0, delta_s=1, H=H, sig2=sig2)
+        cov_t0_s0 = self._autocovariance_matrix(delta_t=0, delta_s=0, H=H, sig2=sig2)
         return cov_t1_s1 - cov_t1_s0 - cov_t0_s1 + cov_t0_s0
-
-    # def _autocovariance_matrix_increment(self, sig2: float, H: Union[List, np.ndarray], add_on_sig2=None):
-    #     if isinstance(H, (float, int)):
-    #         raise ValueError('H needs to be a list for MBM.')
-    #     Sigma = np.zeros((self.N, self.N))
-    #     for i in range(self.N):
-    #         for j in range(self.N):
-    #             h1 = H[i]
-    #             h2 = H[j]
-    #             h = h1 + h2
-    #             # D = self._D(alpha=h)
-    #             D = self._D(x=h1, y=h2)
-    #             k = abs(i - j)
-    #             Sigma[i, j] = sig2 * D * ((i + 1) ** h + (j + 1) ** h - abs(i - j) ** h)
-    #     return Sigma
