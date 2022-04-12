@@ -1,6 +1,6 @@
 import pprint as pp
 from math import sqrt
-
+import pandas as pd
 import numpy as np
 
 from fractal_analysis.tester.critical_surface import CriticalSurfaceFBM, CriticalSurfaceMFBM
@@ -112,3 +112,17 @@ def test_range_sig2():
         print(i)
         print(count_sig2)
     # print(count)
+
+
+# def test_real_date():
+#     series_df = pd.read_csv('woodchan_normal_case.csv', header=None)
+#     N = series_df.shape[0]
+#     series_num = series_df.shape[1]
+#     trial = 1
+#     series = series_df.iloc[:, trial]
+#     t = np.linspace(0, 1, N, endpoint=True)
+#     h = 0.5 + 0.3 * np.sin(4 * np.pi * t)
+#     mbm_tester = MBMSeriesTester(critical_surface=CriticalSurfaceMFBM(N=N, alpha=0.01, is_increment_series=True))
+#     is_mbm, sig2 = mbm_tester.test(h=h, x=series, add_on_sig2=0, sig2=1)
+#     print(is_mbm)
+#     print(sig2)
