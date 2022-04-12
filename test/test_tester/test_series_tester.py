@@ -101,11 +101,11 @@ def test_range_sig2():
         series = np.cumsum(series)
         count_sig2 = []
         for sig2 in np.concatenate((np.arange(0.1, 1.1, 0.1), [1e-2, 1e-3])):
-            # fbm_tester = FBMSeriesTester(critical_surface=CriticalSurfaceFBM(N=N, alpha=0.05, k=1))
-            # ret, sig2 = fbm_tester.test(h=0.5, x=series, sig2=sig2)
-            mbm_tester = MBMSeriesTester(
-                critical_surface=CriticalSurfaceMFBM(N=N, alpha=0.05, is_increment_series=True))
-            ret, sig2 = mbm_tester.test(h=np.ones(N) * 0.5, x=series, sig2=sig2)
+            fbm_tester = FBMSeriesTester(critical_surface=CriticalSurfaceFBM(N=N, alpha=0.05, is_increment_series=True))
+            ret, sig2 = fbm_tester.test(h=0.5, x=series, sig2=sig2, add_on_sig2=0)
+            # mbm_tester = MBMSeriesTester(
+            #     critical_surface=CriticalSurfaceMFBM(N=N, alpha=0.05, is_increment_series=True))
+            # ret, sig2 = mbm_tester.test(h=np.ones(N) * 0.5, x=series, sig2=sig2)
             if ret:
                 count_sig2.append(sig2)
         count[i] = count_sig2

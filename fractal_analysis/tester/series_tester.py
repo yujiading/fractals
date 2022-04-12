@@ -27,7 +27,7 @@ class SeriesTester:
         self._quantile = None
 
     def test(self, x: Union[List, np.ndarray, pd.Series], h: Union[float, List, np.ndarray, pd.Series],
-             sig2: float = None):
+             add_on_sig2: float = 0, sig2: float = None):
         """
             x: series to test
             h: holder exponent, same length as x if test MBM, float in (0,1) if test FBM
@@ -67,7 +67,7 @@ class SeriesTester:
         else:
             if isinstance(h, pd.Series):
                 h = np.array(h)
-            quantile = self.critical_surface.quantile(sig2=sig2, H=h)
+            quantile = self.critical_surface.quantile(sig2=sig2, H=h, add_on_sig2=add_on_sig2)
             if self.is_cache_quantile:
                 self._old_h = h
                 self._old_sig2 = sig2

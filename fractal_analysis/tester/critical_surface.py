@@ -94,7 +94,15 @@ class CriticalSurfaceFBM(CriticalSurfaceBrownianMotion):
         return r_M_k
 
     def _autocovariance_matrix(self, sig2: float, H: float, add_on_sig2: float):
-        raise ValueError("No non increment version exists, use is_increment_series=True for FBM testing.")
+        # raise ValueError("No non increment version exists, use is_increment_series=True for FBM testing.")
+        if not isinstance(H, (float, int)) or H > 1 or H < 0:
+            raise ValueError(f'H is {H}, but it needs to be a float in [0,1].')
+        Sigma = np.zeros((self.N, self.N))
+        twoH = H * 2
+        for i in range(self.N):
+            for j in range(self.N):
+                Sigma[i, j] = 0.5 * ((i + 1) ** twoH + (j + 1) ** twoH - abs(i - j) ** twoH)
+            return sig2 * Sigma
 
     def _autocovariance_matrix_increment(self, sig2: float, add_on_sig2: float, H: float):
         if not isinstance(H, (float, int)) or H > 1 or H < 0:
