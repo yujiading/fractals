@@ -34,7 +34,7 @@ def test_fbm_covariance():
 
 
 def test_critical_surface_mbm():
-    # is_increment_series True vs False #todo:True!!!
+    # is_increment_series True vs False
     N = 200
     series = np.random.randn(N) * 0.5 * math.sqrt(1 / N)
     series = np.cumsum(series)
@@ -52,21 +52,7 @@ def test_critical_surface_mbm():
 
 
 def test_critical_surface_fbm():
-    # the following test verifies the following sentence in the paper:
-    # Michał Balcerek, Krzysztof Burnecki. (2020)
-    # Testing of fractional Brownian motion in a noisy environment.
-    # Chaos, Solitons & Fractals, Volume 140, 110097.
-    # https://doi.org/10.1016/j.chaos.2020.110097
-
-    # "For example, when the analysed data have length N = 200 and we want to check if they come from FBM with noise
-    # with H = 0.3 and σ = 0.3, we should look at blue lines in Fig. 3 at σ = 0.3. We read the values −0.51 and −0.16."
-
-    N = 200
-    add_on_sig = 0.3
-    critical_surface = CriticalSurfaceFBM(N=N, alpha=0.05, is_increment_series=True)
-    print(critical_surface.quantile(sig2=1, H=0.3, add_on_sig2=add_on_sig ** 2))
-
-    # is_increment_series True vs False  #todo True!!!
+    # is_increment_series True vs False
     N = 200
     series = np.random.randn(N) * 0.5 * math.sqrt(1 / N)
     series = np.cumsum(series)
@@ -83,22 +69,56 @@ def test_critical_surface_fbm():
     print(np.dot(series.T.dot(critical_surface.matrix_A_k), series))
 
 
-# def test_real_date():
-#     trial = 1
-#     is_increment_series = True
-#     add_on_sig = 0
-#     sig2 = 1
-#
-#     series_df = pd.read_csv('woodchan_normal_case.csv', header=None)
-#     N = series_df.shape[0]
-#     series_num = series_df.shape[1]
-#     series = series_df.iloc[:, trial]
-#     t = np.linspace(0, 1, N, endpoint=True)
-#     h = 0.5 + 0.3 * np.sin(4 * np.pi * t)
-#     critical_surface = CriticalSurfaceMFBM(N=N, alpha=0.01, is_increment_series=is_increment_series)
-#     print(critical_surface.quantile(sig2=sig2, H=h, add_on_sig2=add_on_sig ** 2))
-#     if is_increment_series:
-#         series_inc = np.diff(series, prepend=0)
-#         print(np.dot(series_inc.T.dot(critical_surface.matrix_A_k), series_inc))
-#     else:
-#         print(np.dot(series.T.dot(critical_surface.matrix_A_k), series))
+def test_real_date_mbm():
+    trial = 17
+    is_increment_series = True
+    add_on_sig = 0
+    sig2 = 1
+    alpha = 0.01
+    is_mean = False # useless when use increment
+    is_std = False
+
+    # series_df = pd.read_csv('woodchan_normal_case.csv', header=None)
+    series_df = pd.read_csv('dpr_lower_case.csv', header=None)
+    N = series_df.shape[0]
+    series = series_df.iloc[:, trial]
+    if is_mean:
+        series = series - series.mean()
+    if is_std:
+        series = series / series.std()
+    t = np.linspace(0, 1, N, endpoint=True)
+    # h = 0.5 + 0.3 * np.sin(4 * np.pi * t)
+    h = 0.1 + 0.01 * np.sin(4 * np.pi * t)
+    critical_surface = CriticalSurfaceMFBM(N=N, alpha=alpha, is_increment_series=is_increment_series)
+    print(critical_surface.quantile(sig2=sig2, H=h, add_on_sig2=add_on_sig ** 2))
+    if is_increment_series:
+        series_inc = np.diff(series, prepend=0)
+        print(np.dot(series_inc.T.dot(critical_surface.matrix_A_k), series_inc))
+    else:
+        print(np.dot(series.T.dot(critical_surface.matrix_A_k), series))
+
+def test_real_date_fbm():
+    trial = 17
+    is_increment_series = True
+    add_on_sig = 0
+    sig2 = 1
+    alpha = 0.01
+    is_mean = False # useless when use increment
+    is_std = False
+
+    series_df = pd.read_csv('woodchan_fBm_0.2.csv', header=None)
+    N = series_df.shape[0]
+    series = series_df.iloc[:, trial]
+    if is_mean:
+        series = series - series.mean()
+    if is_std:
+        series = series / series.std()
+    t = np.linspace(0, 1, N, endpoint=True)
+    h = 0.2
+    critical_surface = CriticalSurfaceFBM(N=N, alpha=alpha, is_increment_series=is_increment_series)
+    print(critical_surface.quantile(sig2=sig2, H=h, add_on_sig2=add_on_sig ** 2))
+    if is_increment_series:
+        series_inc = np.diff(series, prepend=0)
+        print(np.dot(series_inc.T.dot(critical_surface.matrix_A_k), series_inc))
+    else:
+        print(np.dot(series.T.dot(critical_surface.matrix_A_k), series))

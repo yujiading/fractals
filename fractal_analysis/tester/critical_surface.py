@@ -104,7 +104,9 @@ class CriticalSurfaceFBM(CriticalSurfaceBrownianMotion):
         twoH = 2 * H
         for i in range(self.N):
             for j in range(i, self.N):
-                sigma = 0.5 * ((i + 1) ** twoH + (j + 1) ** twoH - abs(i - j) ** twoH)
+                t = (i + 1)/self.N
+                s = (j + 1)/self.N
+                sigma = 0.5 * (t ** twoH + s ** twoH - abs(t - s) ** twoH)  # todo: /self.N
                 Sigma[i, j] = sigma
                 if i != j:
                     Sigma[j, i] = sigma
@@ -118,7 +120,10 @@ class CriticalSurfaceFBM(CriticalSurfaceBrownianMotion):
         for i in range(self.N):
             for j in range(i, self.N):
                 k = abs(i - j)
-                sigma = 0.5 * ((k + 1) ** twoH + abs(k - 1) ** twoH - 2 * k ** twoH)
+                t_k_plus_one = (k + 1) / self.N
+                t_k_minus_one = (k - 1) / self.N
+                t_k = k / self.N
+                sigma = 0.5 * (t_k_plus_one ** twoH + abs(t_k_minus_one) ** twoH - 2 * t_k ** twoH)  # todo: /self.N
                 Sigma[i, j] = sigma
                 if i != j:
                     Sigma[j, i] = sigma
@@ -142,18 +147,21 @@ class CriticalSurfaceMFBM(CriticalSurfaceBrownianMotion):
         sin_y = math.sin(math.pi * y)
         return math.sqrt(gam_x * gam_y * sin_x * sin_y) / 2 / gam_xy / sin_xy
 
-    def _autocovariance_matrix(self, sig2: float, H: Union[List, np.ndarray], add_on_sig2: float, delta_t: int = 0,
-                               delta_s: int = 0):
+    def _autocovariance_matrix(self, sig2: float, H: Union[List, np.ndarray], add_on_sig2: float, delta_i: int = 0,
+                               delta_j: int = 0):
         Sigma = np.zeros((self.N, self.N))
         for i in range(self.N):
             for j in range(i, self.N):
-                ht_idx = min(self.N - 1, i + delta_t)
-                hs_idx = min(self.N - 1, j + delta_s)
+                ht_idx = min(self.N - 1, i + delta_i)
+                hs_idx = min(self.N - 1, j + delta_j)
                 ht = H[ht_idx]
                 hs = H[hs_idx]
-                h = ht + hs
+                hths = ht + hs
                 D = self._D(x=ht, y=hs)
-                sigma = D * ((i + delta_t + 1) ** h + (j + delta_s + 1) ** h - abs(i + delta_t - j - delta_s) ** h)
+                # sigma = D * ((i + delta_t + 1) ** h + (j + delta_s + 1) ** h - abs(i + delta_t - j - delta_s) ** h)
+                t = (i + delta_i + 1) / self.N
+                s = (j + delta_j + 1) / self.N
+                sigma = D * (t ** hths + s ** hths - abs(t - s) ** hths)  # todo: /self.N
                 Sigma[i, j] = sigma
                 if i != j:
                     Sigma[j, i] = sigma
@@ -162,9 +170,9 @@ class CriticalSurfaceMFBM(CriticalSurfaceBrownianMotion):
     def _autocovariance_matrix_increment(self, sig2: float, H: Union[List, np.ndarray], add_on_sig2: float):
         if isinstance(H, (float, int)):
             raise ValueError('H needs to be a list for MBM.')
-        cov_t1_s1 = self._autocovariance_matrix(delta_t=1, delta_s=1, H=H, sig2=1, add_on_sig2=0)
-        cov_t1_s0 = self._autocovariance_matrix(delta_t=1, delta_s=0, H=H, sig2=1, add_on_sig2=0)
-        cov_t0_s1 = self._autocovariance_matrix(delta_t=0, delta_s=1, H=H, sig2=1, add_on_sig2=0)
-        cov_t0_s0 = self._autocovariance_matrix(delta_t=0, delta_s=0, H=H, sig2=1, add_on_sig2=0)
+        cov_t1_s1 = self._autocovariance_matrix(delta_i=1, delta_j=1, H=H, sig2=1, add_on_sig2=0)
+        cov_t1_s0 = self._autocovariance_matrix(delta_i=1, delta_j=0, H=H, sig2=1, add_on_sig2=0)
+        cov_t0_s1 = self._autocovariance_matrix(delta_i=0, delta_j=1, H=H, sig2=1, add_on_sig2=0)
+        cov_t0_s0 = self._autocovariance_matrix(delta_i=0, delta_j=0, H=H, sig2=1, add_on_sig2=0)
         cov_inc = cov_t1_s1 - cov_t1_s0 - cov_t0_s1 + cov_t0_s0
         return sig2 * cov_inc + self._add_on_sig2_matrix(add_on_sig2=add_on_sig2)
