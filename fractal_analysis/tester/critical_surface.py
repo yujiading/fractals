@@ -18,7 +18,7 @@ class CriticalSurfaceBrownianMotion(ABC):
                  alpha: float = 0.05,
                  k: int = 1,
                  chi2_trials: int = 100000,
-                 is_increment_series: bool = True):
+                 is_increment_series: bool = False):
         self.N = N
         self.alpha = alpha
         self.k = k
@@ -104,8 +104,8 @@ class CriticalSurfaceFBM(CriticalSurfaceBrownianMotion):
         twoH = 2 * H
         for i in range(self.N):
             for j in range(i, self.N):
-                t = (i + 1)/self.N
-                s = (j + 1)/self.N
+                t = (i + 1) / self.N
+                s = (j + 1) / self.N
                 sigma = 0.5 * (t ** twoH + s ** twoH - abs(t - s) ** twoH)  # todo: /self.N
                 Sigma[i, j] = sigma
                 if i != j:

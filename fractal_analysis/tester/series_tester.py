@@ -32,6 +32,7 @@ class SeriesTester:
             x: series to test
             h: holder exponent, same length as x if test MBM, float in (0,1) if test FBM
             sig2: sigma square, if None, use auto-estimated sigma
+            add_on_sig2: add on noise
         """
         if self.critical_surface.is_increment_series:
             series = np.diff(x, prepend=0)
