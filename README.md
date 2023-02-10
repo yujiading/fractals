@@ -1,10 +1,22 @@
 # Fractal Analysis
 Fractal and multifractal methods, including 
 
-- fractional Brownian motion (FBM) tester
-- multifractional Brownian motion (MBM) tester
-- IR hurst exponents estimator of multifractional Brownian motion (MBM)
-- QV hurst exponents estimator of multifractional Brownian motion (MBM)
+- testers:
+  - fractional Brownian motion (FBM) tester
+  - multifractional Brownian motion (MBM) tester
+- estimators:
+  - IR hurst exponents estimator of multifractional Brownian motion (MBM)
+  - QV hurst exponents estimator of multifractional Brownian motion (MBM)
+- simulators:
+  - Wood and Chan methods:
+    - Wood and Chan fractional Brownian motion (FBM) simulator
+    - Wood and Chan multifractional Brownian motion (MBM) simulator
+  - DPR methods:
+    - DPR fractional Brownian motion (FBM) simulator
+    - DPR sub-fractional Brownian motion (FBM) simulator
+    - DPR bi-fractional Brownian motion (FBM) simulator
+    - DPR general self similar process simulator
+    - DPR multifractional Brownian motion (MBM) simulator
 
 ## FBM / MBM tester
 Test if a series is FBM (MBM) given the hurst parameter (hurst exponents series).
@@ -47,6 +59,17 @@ Bardet, the author in the above paper, provides a Matlab code that can be found 
 >http://samm.univ-paris1.fr/Sofwares-Logiciels  
 Software for estimating the Hurst function H of a Multifractional Brownian Motion:
  Quadratic Variation estimator and IR estimator
+
+## Wood and Chan FBM simulator
+Generate a Fractional Brownian Motion (FBM) using Wood and Chan circulant matrix. The implementation is based on the following paper:
+>A.T.A. Wood, G. Chan, Simulation of stationary Gaussian process in [0,1]d.
+Journal of Computational and Graphical Statistics, Vol. 3 (1994) 409-432.
+
+and based on a Matlab library ```Fraclab``` and its function ```fbmwoodchan.m``` that can be found at:
+
+>https://project.inria.fr/fraclab
+
+
 
 
 ## To install
