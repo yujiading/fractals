@@ -5,7 +5,7 @@ import scipy
 from fractal_analysis.simulator.wood_chan.wood_chan_fractal_simulator import WoodChanFgnSimulator
 
 
-class DprSelfSimilarProcessSimulator(WoodChanFgnSimulator):
+class DprSelfSimilarFractalSimulator(WoodChanFgnSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo:check source paper name
@@ -58,7 +58,7 @@ class DprSelfSimilarProcessSimulator(WoodChanFgnSimulator):
         return self_similar
 
 
-class DprSubFbmSimulator(DprSelfSimilarProcessSimulator):
+class DprSubFbmSimulator(DprSelfSimilarFractalSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo:check source paper name
@@ -98,7 +98,7 @@ class DprSubFbmSimulator(DprSelfSimilarProcessSimulator):
         return sub_fbm
 
 
-class DprBiFbmSimulator(DprSelfSimilarProcessSimulator):
+class DprBiFbmSimulator(DprSelfSimilarFractalSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo:check source paper name
@@ -136,7 +136,8 @@ class DprBiFbmSimulator(DprSelfSimilarProcessSimulator):
         return v
 
     def get_bi_fbm(self, is_plot=False, seed=None):
-        bi_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPR', series_name='Bi-FBM')
+        bi_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPR',
+                                               series_name=f'{self.bi_factor} Bi-FBM')
         return bi_fbm
 
 
@@ -166,8 +167,12 @@ class DprFbmSimulator(DprBiFbmSimulator):
         super().__init__(sample_size=sample_size, hurst_parameter=hurst_parameter, bi_factor=1,
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
 
+    def get_fbm(self, is_plot=False, seed=None):
+        fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPR', series_name='FBM')
+        return fbm
 
-class DprNegFbmSimulator(DprSelfSimilarProcessSimulator):
+
+class DprNegFbmSimulator(DprSelfSimilarFractalSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo:check source paper name

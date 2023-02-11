@@ -19,15 +19,15 @@ def test_dpr_sub_fbm_simulator():
 
 
 def test_dpr_bi_fbm_simulator():
-    sub_fbm = DprBiFbmSimulator(sample_size=1000, hurst_parameter=0.8, bi_factor=0.2).get_bi_fbm(is_plot=True, seed=1)
-    sub_fbm = DprBiFbmSimulator(sample_size=1000, hurst_parameter=0.2, bi_factor=0.2).get_bi_fbm(is_plot=True, seed=1)
-    sub_fbm = DprBiFbmSimulator(sample_size=1000, hurst_parameter=0.2, bi_factor=1).get_bi_fbm(is_plot=True, seed=1)
+    bi_fbm = DprBiFbmSimulator(sample_size=1000, hurst_parameter=0.8, bi_factor=0.2).get_bi_fbm(is_plot=True, seed=1)
+    bi_fbm = DprBiFbmSimulator(sample_size=1000, hurst_parameter=0.2, bi_factor=0.2).get_bi_fbm(is_plot=True, seed=1)
+    bi_fbm = DprBiFbmSimulator(sample_size=1000, hurst_parameter=0.2, bi_factor=1).get_bi_fbm(is_plot=True, seed=1)
 
 
 def test_dpr_fbm_simulator():
-    sub_fbm = DprFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_bi_fbm(is_plot=True, seed=1)
-    sub_fbm = DprFbmSimulator(sample_size=1000, hurst_parameter=0.2).get_bi_fbm(is_plot=True, seed=1)
-    sub_fbm = DprFbmSimulator(sample_size=1000, hurst_parameter=0.2, lamperti_multiplier=10).get_bi_fbm(is_plot=True,
+    fbm = DprFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm(is_plot=True, seed=1)
+    fbm = DprFbmSimulator(sample_size=1000, hurst_parameter=0.2).get_fbm(is_plot=True, seed=1)
+    fbm = DprFbmSimulator(sample_size=1000, hurst_parameter=0.2, lamperti_multiplier=10).get_fbm(is_plot=True,
                                                                                                         seed=1)
 
 
