@@ -13,9 +13,9 @@ def test_first_line_circulant_matrix_sub_fbm():
 
 
 def test_dpr_sub_fbm_simulator():
-    sub_fbm = DprSubFbmSimulator(sample_size=10, hurst_parameter=0.8).get_sub_fbm(is_plot=True, seed=1)
-    print(len(sub_fbm))
-    print(sub_fbm)
+    sub_fbm = DprSubFbmSimulator(sample_size=1000, hurst_parameter=0.2).get_sub_fbm(is_plot=True, seed=1)
+    sub_fbm = DprSubFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_sub_fbm(is_plot=True, seed=1)
+
 
 
 def test_dpr_bi_fbm_simulator():

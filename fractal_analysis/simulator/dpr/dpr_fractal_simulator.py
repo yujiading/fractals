@@ -7,7 +7,7 @@ from fractal_analysis.simulator.wood_chan.wood_chan_fractal_simulator import Woo
 
 class DprSelfSimilarFractalSimulator(WoodChanFgnSimulator):
     """
-        Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
+        Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo:check source paper name
         Corresponding Matlab code by Guangpeng Ren: todo:add link to matlab code
         Main idea: we use Lamperti transform to transfer a self-similar process to a stationary process, and
@@ -87,10 +87,11 @@ class DprSubFbmSimulator(DprSelfSimilarFractalSimulator):
 
     def sub_fbm_covariance_func(self, k):
         h2 = 2 * self.hurst_parameter
-        k_h_n = k * self.hurst_parameter / self.sample_size
-        k_n_2 = k / self.sample_size / 2
-        v = np.exp(k_h_n) + np.exp(-k_h_n) - 0.5 * (
-                (np.exp(k_n_2) + np.exp(-k_n_2)) ** h2 - np.abs(np.exp(k_n_2) - np.exp(-k_n_2)) ** h2)
+        n = self.sample_size
+        k_h_n = k * self.hurst_parameter / n
+        k_n_2 = k / n / 2
+        v = n ** k_h_n + n ** (-k_h_n) - 0.5 * (
+                (n ** k_n_2 + n ** (-k_n_2)) ** h2 - np.abs(n ** k_n_2 - n ** (-k_n_2)) ** h2)
         return v
 
     def get_sub_fbm(self, is_plot=False, seed=None):
@@ -128,10 +129,11 @@ class DprBiFbmSimulator(DprSelfSimilarFractalSimulator):
         self.bi_factor = bi_factor
 
     def bi_fbm_covariance_func(self, k):
-        k_h_n = k * self.hurst_parameter / self.sample_size
-        k_n_2 = k / self.sample_size / 2
+        n = self.sample_size
+        k_h_n = k * self.hurst_parameter / n
+        k_n_2 = k / n / 2
         h2 = 2 * self.hurst_parameter
-        v = ((np.exp(k_h_n) + np.exp(-k_h_n)) ** self.bi_factor - np.abs(np.exp(k_n_2) - np.exp(-k_n_2)) ** (
+        v = ((n ** k_h_n + n ** (-k_h_n)) ** self.bi_factor - np.abs(n ** k_n_2 - n ** (-k_n_2)) ** (
                 h2 * self.bi_factor)) / (2 * self.bi_factor)
         return v
 
@@ -200,19 +202,16 @@ class DprNegFbmSimulator(DprSelfSimilarFractalSimulator):
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
 
     def neg_fbm_covariance_func(self, k):
-        h2 = 2 * self.hurst_parameter
-        numerator = (scipy.special.gamma(self.hurst_parameter + 0.5)) ** 2 * (
-                np.exp(self.hurst_parameter * (k / self.sample_size)) + np.exp(
-            self.hurst_parameter * (-k / self.sample_size)) - (
-                        (np.abs(1 - np.exp(-k / self.sample_size))) ** self.hurst_parameter) * (
-                    np.abs(1 - np.exp(k / self.sample_size))) ** self.hurst_parameter)
-        denominator = 2 * scipy.special.gamma(h2 + 1) * np.sin(self.hurst_parameter * np.pi)
-        term = -np.exp(-np.abs(k / self.sample_size) / 2) / (self.hurst_parameter + 0.5)
-        summ = scipy.special.hyp2f1(0.5 - self.hurst_parameter, 1, self.hurst_parameter + 3 / 2,
-                                    np.exp(-np.abs(k / self.sample_size)))
+        n = self.sample_size
+        h = self.hurst_parameter
+        h2 = 2 * h
+        numerator = (scipy.special.gamma(h + 0.5)) ** 2 * (n ** (h * (k / n)) + n ** (h * (-k / n)) - (
+                (np.abs(1 - n ** (-k / n))) ** h) * (np.abs(1 - n ** (k / n))) ** h)
+        denominator = 2 * scipy.special.gamma(h2 + 1) * np.sin(h * np.pi)
+        term = -n ** (-np.abs(k / n) / 2) / (h + 0.5)
+        summ = scipy.special.hyp2f1(0.5 - h, 1, h + 3 / 2, n ** (-np.abs(k / n)))
         v = numerator / denominator + term * summ
-        v[0] = (scipy.special.gamma(self.hurst_parameter + 0.5) ** 2) / (
-                scipy.special.gamma(h2 + 1) * np.sin(self.hurst_parameter * np.pi)) - 1 / h2
+        v[0] = (scipy.special.gamma(h + 0.5) ** 2) / (scipy.special.gamma(h2 + 1) * np.sin(h * np.pi)) - 1 / h2
         return v
 
     def get_neg_fbm(self, is_plot=False, seed=None):

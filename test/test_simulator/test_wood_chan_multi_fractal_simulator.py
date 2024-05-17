@@ -36,8 +36,10 @@ def test_fbm_cov_matrix():
     assert all(np.around(v, 4) == [-0.0003, 0.1325, 0.0511, -0.0233, 0.7126, 0.1193])
     assert round(err, 4) == 0.0491
 
+
 def test_get_mbm():
-    sample_size=500
+    sample_size = 500
     t = np.linspace(0, 1, sample_size)
-    holder_exponents = 0.5 + 0.3 * np.sin(4 * np.pi * t)
-    WoodChanMbmSimulator(sample_size=sample_size,holder_exponents=holder_exponents).get_mbm(is_plot=True,seed=1)
+    holder_exponents = 0.9 + 0.01 * np.sin(4 * np.pi * t)
+    WoodChanMbmSimulator(sample_size=sample_size, holder_exponents=holder_exponents).get_mbm(is_plot=True, seed=1,
+                                                                                             hurst_name='0.5+0.3sin(4pit)')
