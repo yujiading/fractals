@@ -22,6 +22,7 @@ def test_simulate_w():
 
 
 def test_wood_chan_fbm_simulator_get_fbm():
+    print(WoodChanFbmSimulator(sample_size=1000, hurst_parameter=0.2).get_fbm(is_plot=True, seed=1))
     print(WoodChanFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm(is_plot=True, seed=1))
 
     # print(WoodChanFbmSimulator(sample_size=10, hurst_parameter=0.2).get_fbm(is_plot=True, seed=1))
