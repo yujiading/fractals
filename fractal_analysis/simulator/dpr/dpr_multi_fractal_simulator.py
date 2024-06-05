@@ -32,7 +32,7 @@ class DprMbmSimulator(MultiFractalBaseSimulator):
 
     def get_fractal_base_func(self, mean: float, seed: int):
         neg_fbm_simulator = DprNegFbmSimulator(sample_size=self.sample_size, hurst_parameter=mean, tmax=self.tmax,
-                                               std_const=self.std_const)
+                                               std_const=self.std_const, lamperti_multiplier=self.lamperti_multiplier)
         return neg_fbm_simulator.get_neg_fbm(seed=seed)
 
     @staticmethod

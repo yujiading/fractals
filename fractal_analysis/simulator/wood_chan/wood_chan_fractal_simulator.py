@@ -64,10 +64,10 @@ class WoodChanFgnSimulator:
         eigc = self._first_line_circulant_matrix(m=m, cov=cov)
         eigc = fft(eigc)
         # search of the power of two (<2**18) such that eigc is definite positive
-        # while any(v <= 0 for v in eigc) and m < 2 ** 17:
-        #     m = 2 * m
-        #     eigc = self._first_line_circulant_matrix(m=m, cov=cov)
-        #     eigc = fft(eigc).real
+        while any(v <= 0 for v in eigc) and m < 2 ** 17:
+            m = 2 * m
+            eigc = self._first_line_circulant_matrix(m=m, cov=cov)
+            eigc = fft(eigc).real
         # simulation of w=(Q)^t Z, where Z leads N(0,I_m) and (Q)_{jk} = m^(-1/2) exp(-2i pi jk/m)
         w = self._simulate_w(m=m, seed=seed)
         # reconstruction of the fgn
