@@ -11,12 +11,12 @@ Fractal and multifractal methods, including
   - Wood and Chan methods:
     - Wood and Chan fractional Brownian motion (FBM) simulator
     - Wood and Chan multifractional Brownian motion (MBM) simulator
-  - DPR methods:
-    - DPR fractional Brownian motion (FBM) simulator
-    - DPR sub-fractional Brownian motion (sub-FBM) simulator
-    - DPR bi-fractional Brownian motion (bi-FBM) simulator
-    - DPR general fractional self similar process simulator
-    - DPR multifractional Brownian motion (MBM) simulator
+  - DPRW methods:
+    - DPRW fractional Brownian motion (FBM) simulator
+    - DPRW sub-fractional Brownian motion (sub-FBM) simulator
+    - DPRW bi-fractional Brownian motion (bi-FBM) simulator
+    - DPRW general fractional self similar process simulator
+    - DPRW multifractional Brownian motion (MBM) simulator
 
 ## FBM / MBM tester
 Test if a series is FBM (MBM) given the hurst parameter (hurst exponents series).
@@ -81,7 +81,7 @@ and based on a Matlab library ```Fraclab``` and its function ```mBmQuantifKrigea
 
 >https://project.inria.fr/fraclab
 
-## DPR FBM / sub-FBM / bi-FBM / self similar fractal simulator
+## DPRW FBM / sub-FBM / bi-FBM / self similar fractal simulator
 Generate a fractional self similar processes. 
 
 The main idea is:  use Lamperti transform to transfer a self-similar process to a stationary process, and
@@ -91,29 +91,21 @@ The main idea is:  use Lamperti transform to transfer a self-similar process to 
                    the series. 
 
 The implementation is based on our paper:
->Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
+>Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion." 
 
 [//]: # (> #todo: add paper link )
 
-We also implemented it in Matlab that can be found at
->add link
 
-[//]: # (> #todo: add matlab link )
-
-## DPR MBM simulator
-Generates a Multi-fractional Brownian Motion (mBm) using DPR Lamperti Transformation, some krigging and a prequantification.
+## DPRW MBM simulator
+Generates a Multi-fractional Brownian Motion (mBm) using DPRW Lamperti Transformation, some krigging and a prequantification.
 
 The implementation is based on our paper:
->Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
+>Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion." 
 
 [//]: # (> #todo: add paper link )
 
-We also implemented it in Matlab that can be found at
->add link
-
-[//]: # (> #todo: add matlab link )
 
 ## To install
 To get started, simply do:
@@ -142,7 +134,7 @@ Import:
 from fractal_analysis.tester.series_tester import MBMSeriesTester, FBMSeriesTester
 from fractal_analysis.tester.critical_surface import CriticalSurfaceFBM, CriticalSurfaceMFBM
 ```
-To test if a series ```series``` is FBM, one needs to use ```CriticalSurfaceFBM``` with length of the series ```N```,
+To test if a series ```series``` is FBM, use ```CriticalSurfaceFBM``` with length of the series ```N```,
 the significance level ```alpha``` (look at quantiles of order ```alpha/2``` and ```1 − alpha/2```), and  choose to test
 on the series itself or its increment series using ```is_increment_series``` (default is ```False```, meaning to test on
 the series itself),
@@ -158,16 +150,16 @@ is_fbm, sig2 = fbm_tester.test(h=0.3, x=series, sig2=None, add_on_sig2=0)
 If the output contains, for example:
 > Bad auto sigma square calculated with error 6.239236333681868. Suggest to give sigma square and rerun.
 
-The auto sigma square estimated is not accurate. One may want to manually choose a sigma square and rerun. For example:
+The auto sigma square estimated is not accurate. You may want to manually choose a sigma square and rerun. For example:
 ```
 is_fbm, sig2 = fbm_tester.test(h=0.3, x=series, sig2=1, add_on_sig2=0)
 ```
-If one wants to test with an add-no noise, change the value of ```add_on_sig2```.
+If you want to test with an add-on noise, change the value of ```add_on_sig2```.
 
 
 
 
-To test if the series is MBM, one needs to use ```CriticalSurfaceMFBM``` with length of the series ```N```
+To test if the series is MBM,  use ```CriticalSurfaceMFBM``` with length of the series ```N```
 and the significance level ```alpha``` (look at quantiles of order ```alpha/2``` and ```1 − alpha/2```) 
 ```
 mbm_tester = MBMSeriesTester(critical_surface=CriticalSurfaceMFBM(N=N, alpha=0.05, is_increment_series=False))
@@ -180,9 +172,9 @@ Be aware that ```MBMSeriesTester``` requires ```len(h_mbm_series)==len(series)``
 
 #### Use of cache
 Use caching to speed up the testing process. If the series ```x``` for testing is unchanged and multiple ```h``` 
-and/or ```sig2``` are used, one may want to set 
+and/or ```sig2``` are used, you may want to set 
 ```is_cache_stat=True``` to allow cache variable ```stat```. If ```h``` and ```sig2``` are unchanged and multiple ```x```
-are used, one may want to set ```is_cache_quantile=True``` to allow cache variable ```quantile```. For example:
+are used, you may want to set ```is_cache_quantile=True``` to allow cache variable ```quantile```. For example:
 ```
 mbm_tester = MBMSeriesTester(critical_surface=CriticalSurfaceMFBM(N=N, alpha=0.05), is_cache_stat=True, is_cache_quantile=False)
 ```
@@ -239,70 +231,70 @@ holder_exponents = 0.5 + 0.3 * np.sin(4 * np.pi * t)
 woodchan_mbm = WoodChanMbmSimulator(sample_size=sample_size,holder_exponents=holder_exponents).get_mbm()
 ```
 
-#### DPR FBM simulator
+#### DPRW FBM simulator
 Import:
 ```
-from fractal_analysis.simulator.dpr.dpr_fractal_simulator import DprFbmSimulator
+from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwFbmSimulator
 ```
 To simulate a FBM series with ```1000``` samples and ```0.8``` hurst parameter,
 ```
-dpr_fbm = DprFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm()
+dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm()
 ```
 
-#### DPR sub-FBM simulator
+#### DPRW sub-FBM simulator
 Import:
 ```
-from fractal_analysis.simulator.dpr.dpr_fractal_simulator import DprSubFbmSimulator
+from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwSubFbmSimulator
 ```
 To simulate a FBM series with ```1000``` samples and ```0.8``` hurst parameter,
 ```
-dpr_sub_fbm = DprSubFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_sub_fbm()
+dprw_sub_fbm = DprwSubFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_sub_fbm()
 ```
-#### DPR bi-FBM simulator
+#### DPRW bi-FBM simulator
 Import:
 ```
-from fractal_analysis.simulator.dpr.dpr_fractal_simulator import DprBiFbmSimulator
+from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwBiFbmSimulator
 ```
 To simulate a FBM series with ```1000``` samples, ```0.8``` hurst parameter, and ```0.2``` bi factor,
 ```
-dpr_bi_fbm = DprBiFbmSimulator(sample_size=1000, hurst_parameter=0.8, bi_factor=0.2).get_bi_fbm()
+dprw_bi_fbm = DprwBiFbmSimulator(sample_size=1000, hurst_parameter=0.8, bi_factor=0.2).get_bi_fbm()
 ```
 When ```bi_factor=1```, bi-FBM becomes FBM
 
-#### DPR self similar fractal simulator
+#### DPRW self similar fractal simulator
 Import:
 ```
-from fractal_analysis.simulator.dpr.dpr_fractal_simulator import DprSelfSimilarFractalSimulator
+from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwSelfSimilarFractalSimulator
 ```
-To simulate a customized self similar fractal series, one needs to input ```covariance_func```. For example,
+To simulate a customized self similar fractal series, you need to input ```covariance_func```. For example,
 ```
-dpr_self_similar_fractal = DprSelfSimilarFractalSimulator(sample_size, hurst_parameter, covariance_func).get_self_similar_process()
+dprw_self_similar_fractal = DprwSelfSimilarFractalSimulator(sample_size, hurst_parameter, covariance_func).get_self_similar_process()
 ```
 
-#### DPR MBM simulator
+#### DPRW MBM simulator
 Import:
 ```
-from fractal_analysis.simulator.dpr.dpr_multi_fractal_simulator import DprMbmSimulator
+from fractal_analysis.simulator.dprw.dprw_multi_fractal_simulator import DprwMbmSimulator
 ```
 To simulate a MBM series with ```1000``` samples and a sin shape holder function,
 ```
 sample_size = 1000
 t = np.linspace(0, 1, sample_size)
 holder_exponents = 0.5 + 0.3 * np.sin(4 * np.pi * t)
-dpr_mbm = DprMbmSimulator(sample_size=sample_size, holder_exponents=holder_exponents).get_mbm()
+dprw_mbm = DprwMbmSimulator(sample_size=sample_size, holder_exponents=holder_exponents).get_mbm()
 ```
 
 #### Plot or seed a simulated series
 
-In all the simulators, one can use ```is_plot``` (default is ```False```) to show or not show the plot of the series. 
+In all the simulators, you can use ```is_plot``` (default is ```False```) to show or not show the plot of the series. 
 Use ```seed```  (default is ```None```) to fix the random state. For example,
 ```
-dpr_fbm = DprFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm(is_plot=True, seed=1)
+dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm(is_plot=True, seed=1)
 ```
 
-#### To use ```lamperti_multiplier``` in DPR simulators
+#### To use ```lamperti_multiplier``` in DPRW simulators
 ```lamperti_multiplier``` is a positive integer used for Lamperti transform. 
 Bigger value (usually <=10) provides more accuracy; default value is 5. For example,
 ```
-dpr_fbm = DprFbmSimulator(sample_size=1000, hurst_parameter=0.8, lamperti_multiplier=10).get_fbm(is_plot=True)
+dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8, lamperti_multiplier=10).get_fbm(is_plot=True)
 ```

@@ -5,11 +5,10 @@ import scipy
 from fractal_analysis.simulator.wood_chan.wood_chan_fractal_simulator import WoodChanFgnSimulator
 
 
-class DprSelfSimilarFractalSimulator(WoodChanFgnSimulator):
+class DprwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo:check source paper name
-        Corresponding Matlab code by Guangpeng Ren: todo:add link to matlab code
+                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
         Main idea: we use Lamperti transform to transfer a self-similar process to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical
@@ -58,11 +57,10 @@ class DprSelfSimilarFractalSimulator(WoodChanFgnSimulator):
         return self_similar
 
 
-class DprSubFbmSimulator(DprSelfSimilarFractalSimulator):
+class DprwSubFbmSimulator(DprwSelfSimilarFractalSimulator):
     """
-        Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo:check source paper name
-        Corresponding Matlab code by Guangpeng Ren: todo:add link to matlab code
+        Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
+                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
         Main idea: we use Lamperti transform to transfer sub-FBM (self-similar process) to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical
@@ -95,15 +93,14 @@ class DprSubFbmSimulator(DprSelfSimilarFractalSimulator):
         return v
 
     def get_sub_fbm(self, is_plot=False, seed=None):
-        sub_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPR', series_name='Sub-FBM')
+        sub_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW', series_name='Sub-FBM')
         return sub_fbm
 
 
-class DprBiFbmSimulator(DprSelfSimilarFractalSimulator):
+class DprwBiFbmSimulator(DprwSelfSimilarFractalSimulator):
     """
-        Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo:check source paper name
-        Corresponding Matlab code by Guangpeng Ren: todo:add link to matlab code
+        Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
+                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
         Main idea: we use Lamperti transform to transfer Bi-FBM (self-similar process) to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical
@@ -138,16 +135,15 @@ class DprBiFbmSimulator(DprSelfSimilarFractalSimulator):
         return v
 
     def get_bi_fbm(self, is_plot=False, seed=None):
-        bi_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPR',
+        bi_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW',
                                                series_name=f'{self.bi_factor} Bi-FBM')
         return bi_fbm
 
 
-class DprFbmSimulator(DprBiFbmSimulator):
+class DprwFbmSimulator(DprwBiFbmSimulator):
     """
-        Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo:check source paper name
-        Corresponding Matlab code by Guangpeng Ren: todo:add link to matlab code
+        Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
+                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
         Main idea: we use Lamperti transform to transfer FBM (self-similar process) to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical
@@ -170,15 +166,14 @@ class DprFbmSimulator(DprBiFbmSimulator):
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
 
     def get_fbm(self, is_plot=False, seed=None):
-        fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPR', series_name='FBM')
+        fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW', series_name='FBM')
         return fbm
 
 
-class DprNegFbmSimulator(DprSelfSimilarFractalSimulator):
+class DprwNegFbmSimulator(DprwSelfSimilarFractalSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo:check source paper name
-        Corresponding Matlab code by Guangpeng Ren: todo:add link to matlab code
+                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
         Main idea: we use Lamperti transform to transfer Neg-FBM (self-similar process) to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical
@@ -215,5 +210,5 @@ class DprNegFbmSimulator(DprSelfSimilarFractalSimulator):
         return v
 
     def get_neg_fbm(self, is_plot=False, seed=None):
-        neg_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPR', series_name='Neg-FBM')
+        neg_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW', series_name='Neg-FBM')
         return neg_fbm

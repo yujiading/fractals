@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,8 +18,8 @@ class KMeans:  # todo: find out if sklearn kmeans can produce same results
         self.n = len(self.x)
         self.x_min = None
         self.x_max = None
-        self.cluster_centers: np.ndarray = None
-        self.labels: np.ndarray = None
+        self.cluster_centers: Optional[np.ndarray] = None
+        self.labels: Optional[np.ndarray] = None
         self.fit()
 
     def fit(self):
@@ -86,7 +86,7 @@ class MultiFractalBaseSimulator(ABC):
         self.eps = 10 ** (-3)
         self.holder_exponents = np.maximum(self.eps, np.minimum(1 - self.eps, holder_exponents))
 
-    def get_kmeans(self) -> np.ndarray:
+    def get_kmeans(self) -> Tuple[np.array, np.array]:
         kmeans = KMeans(n_clusters=self.pre_quant_level, x=self.holder_exponents)
         # To avoid the case of "3 neighbours", we add the min and max values to the k - avgs with a "safety" margin
         mean_min = kmeans.cluster_centers[0]
@@ -109,7 +109,8 @@ class MultiFractalBaseSimulator(ABC):
     def get_fractal_base_func(self, mean: float, seed: int):
         pass
 
-    def get_fractal_bases(self, means: np.ndarray, seed: int) -> np.ndarray:
+    def get_fractal_bases(self, means: np.array, seed: int) -> np.ndarray:
+        """simulate multiple series"""
         base_fbm = np.zeros((self.sample_size, self.pre_quant_level + 2))
         for i in range(self.pre_quant_level + 2):
             base_fbm[:, i] = self.get_fractal_base_func(mean=means[i], seed=seed)
@@ -291,6 +292,7 @@ class WoodChanMbmSimulator(MultiFractalBaseSimulator):
         return v
 
     def get_mbm(self, is_plot: bool = False, seed: int = None, hurst_name: str = ''):
+        """simulate a mbm series"""
         means, labels = self.get_kmeans()
         # precalculation of 1D fBm in the length of k with random inputs.
         base_fbm = self.get_fractal_bases(means=means, seed=seed)
