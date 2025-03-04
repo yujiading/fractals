@@ -1,5 +1,5 @@
 from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwSubFbmSimulator, DprwFbmSimulator, \
-    DprwNegFbmSimulator, DprwBiFbmSimulator
+    DprwNegFbmSimulator, DprwBiFbmSimulator, DprwTriFbmSimulator
 
 
 def test_lamperti_subseq_index():
@@ -17,11 +17,18 @@ def test_dprw_sub_fbm_simulator():
     sub_fbm = DprwSubFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_sub_fbm(is_plot=True, seed=1)
 
 
-
 def test_dprw_bi_fbm_simulator():
     bi_fbm = DprwBiFbmSimulator(sample_size=1000, hurst_parameter=0.8, bi_factor=0.2).get_bi_fbm(is_plot=True, seed=1)
     bi_fbm = DprwBiFbmSimulator(sample_size=1000, hurst_parameter=0.2, bi_factor=0.2).get_bi_fbm(is_plot=True, seed=1)
     bi_fbm = DprwBiFbmSimulator(sample_size=1000, hurst_parameter=0.2, bi_factor=1).get_bi_fbm(is_plot=True, seed=1)
+
+
+def test_dprw_tri_fbm_simulator():
+    tri_fbm = DprwTriFbmSimulator(sample_size=1000, hurst_parameter=0.8, tri_factor=0.2).get_tri_fbm(is_plot=True,
+                                                                                                     seed=1)
+    tri_fbm = DprwTriFbmSimulator(sample_size=1000, hurst_parameter=0.2, tri_factor=0.2).get_tri_fbm(is_plot=True,
+                                                                                                     seed=1)
+    tri_fbm = DprwTriFbmSimulator(sample_size=1000, hurst_parameter=0.2, tri_factor=1).get_tri_fbm(is_plot=True, seed=1)
 
 
 def test_dprw_fbm_simulator():

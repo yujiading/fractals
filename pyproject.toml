@@ -12,16 +12,16 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
-pandas = "^1.4.0"
-scipy = "^1.8.0"
-jupyter = "^1.0.0"
-matplotlib = "^3.6.3"
-scikit-learn = "^1.2.1"
-tqdm = "^4.66.4"
+python = ">=3.13"
+pandas = "^2.2.3"
+scipy = "^1.15.2"
+matplotlib = "^3.10.1"
+scikit-learn = "^1.6.1"
+tqdm = "^4.67.1"
+notebook = "^7.3.2"
 
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^7.0"
 
 [build-system]

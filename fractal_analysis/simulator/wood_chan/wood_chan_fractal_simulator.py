@@ -77,11 +77,13 @@ class WoodChanFgnSimulator:
         fgn = fgn.real
         return fgn
 
-    def plot(self, series: np.ndarray, method_name: str, series_name: str):
+    def plot(self, series: np.ndarray, method_name: str, series_name: str, save_path: str = None):
         plt.plot(np.arange(0, self.tmax, self.tmax / self.sample_size), series)
         plt.title(
             f'{method_name} {series_name} simulation with {self.sample_size} samples and {self.hurst_parameter} hurst')
         plt.xlabel('Time')
+        if save_path is not None:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
         plt.show()
 
 

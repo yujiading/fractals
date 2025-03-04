@@ -15,6 +15,7 @@ Fractal and multifractal methods, including
     - DPRW fractional Brownian motion (FBM) simulator
     - DPRW sub-fractional Brownian motion (sub-FBM) simulator
     - DPRW bi-fractional Brownian motion (bi-FBM) simulator
+    - DPRW tri-fractional Brownian motion (tri-FBM) simulator
     - DPRW general fractional self similar process simulator
     - DPRW multifractional Brownian motion (MBM) simulator
 
@@ -81,7 +82,7 @@ and based on a Matlab library ```Fraclab``` and its function ```mBmQuantifKrigea
 
 >https://project.inria.fr/fraclab
 
-## DPRW FBM / sub-FBM / bi-FBM / self similar fractal simulator
+## DPRW FBM / sub-FBM / bi-FBM / tri-FBM / self similar fractal simulator
 Generate a fractional self similar processes. 
 
 The main idea is:  use Lamperti transform to transfer a self-similar process to a stationary process, and
@@ -246,7 +247,7 @@ Import:
 ```
 from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwSubFbmSimulator
 ```
-To simulate a FBM series with ```1000``` samples and ```0.8``` hurst parameter,
+To simulate a sub-FBM series with ```1000``` samples and ```0.8``` hurst parameter,
 ```
 dprw_sub_fbm = DprwSubFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_sub_fbm()
 ```
@@ -255,11 +256,22 @@ Import:
 ```
 from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwBiFbmSimulator
 ```
-To simulate a FBM series with ```1000``` samples, ```0.8``` hurst parameter, and ```0.2``` bi factor,
+To simulate a bi-FBM series with ```1000``` samples, ```0.8``` hurst parameter, and ```0.2``` bi factor,
 ```
 dprw_bi_fbm = DprwBiFbmSimulator(sample_size=1000, hurst_parameter=0.8, bi_factor=0.2).get_bi_fbm()
 ```
 When ```bi_factor=1```, bi-FBM becomes FBM
+
+#### DPRW tri-FBM simulator
+Import:
+```
+from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwTriFbmSimulator
+```
+To simulate a tri-FBM series with ```1000``` samples, ```0.8``` hurst parameter, and ```0.2``` tri factor,
+```
+dprw_tri_fbm = DprwTriFbmSimulator(sample_size=1000, hurst_parameter=0.8, tri_factor=0.2).get_bi_fbm()
+```
+When ```tri_factor=1```, tri-FBM becomes FBM with multiplier 2.
 
 #### DPRW self similar fractal simulator
 Import:
@@ -287,14 +299,15 @@ dprw_mbm = DprwMbmSimulator(sample_size=sample_size, holder_exponents=holder_exp
 #### Plot or seed a simulated series
 
 In all the simulators, you can use ```is_plot``` (default is ```False```) to show or not show the plot of the series. 
+Set ```is_plot=True``` and ```plot_path="path_to_save/plot_name.png"``` (default is ```None```) to save the plot. 
 Use ```seed```  (default is ```None```) to fix the random state. For example,
 ```
-dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm(is_plot=True, seed=1)
+dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm(is_plot=True, seed=1, plot_path="path_to_save/plot_name.png")
 ```
 
 #### To use ```lamperti_multiplier``` in DPRW simulators
 ```lamperti_multiplier``` is a positive integer used for Lamperti transform. 
 Bigger value (usually <=10) provides more accuracy; default value is 5. For example,
 ```
-dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8, lamperti_multiplier=10).get_fbm(is_plot=True)
+dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8, lamperti_multiplier=10).get_fbm()
 ```
