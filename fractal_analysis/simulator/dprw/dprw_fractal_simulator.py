@@ -48,13 +48,14 @@ class DprwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
         return series_t, lamperti_subseq_index.astype(int)
 
     def get_self_similar_process(self, is_plot=False, method_name=None, series_name=None, seed=None,
-                                 plot_path: str = None):
+                                 plot_path: str = None, y_limits: list = None):
         series_t, lamperti_subseq_index = self._lamperti_subseq_index
         lamp_fgn = self.get_fgn(seed=seed, N=self.lamperti_series_len, cov=self.covariance_func)
         lamp_fgn = lamp_fgn - lamp_fgn[0]
         self_similar = series_t ** self.hurst_parameter * lamp_fgn[lamperti_subseq_index]
         if is_plot:
-            self.plot(series=self_similar, method_name=method_name, series_name=series_name, save_path=plot_path)
+            self.plot(series=self_similar, method_name=method_name, series_name=series_name, save_path=plot_path,
+                      y_limits=y_limits)
         return self_similar
 
 
@@ -93,9 +94,9 @@ class DprwSubFbmSimulator(DprwSelfSimilarFractalSimulator):
                 (n ** k_n_2 + n ** (-k_n_2)) ** h2 + np.abs(n ** k_n_2 - n ** (-k_n_2)) ** h2)
         return v
 
-    def get_sub_fbm(self, is_plot=False, seed=None, plot_path: str = None):
+    def get_sub_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
         sub_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW', series_name='Sub-FBM',
-                                                plot_path=plot_path)
+                                                plot_path=plot_path, y_limits=y_limits)
         return sub_fbm
 
 
@@ -136,9 +137,10 @@ class DprwBiFbmSimulator(DprwSelfSimilarFractalSimulator):
                 h2 * self.bi_factor)) / (2 ** self.bi_factor)
         return v
 
-    def get_bi_fbm(self, is_plot=False, seed=None, plot_path: str = None):
+    def get_bi_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
         bi_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW',
-                                               series_name=f'{self.bi_factor} Bi-FBM', plot_path=plot_path)
+                                               series_name=f'{self.bi_factor} Bi-FBM', plot_path=plot_path,
+                                               y_limits=y_limits)
         return bi_fbm
 
 
@@ -179,9 +181,10 @@ class DprwTriFbmSimulator(DprwSelfSimilarFractalSimulator):
                 h2 * self.tri_factor)
         return v
 
-    def get_tri_fbm(self, is_plot=False, seed=None, plot_path: str = None):
+    def get_tri_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
         tri_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW',
-                                                series_name=f'{self.tri_factor} Tri-FBM', plot_path=plot_path)
+                                                series_name=f'{self.tri_factor} Tri-FBM', plot_path=plot_path,
+                                                y_limits=y_limits)
         return tri_fbm
 
 
@@ -210,9 +213,9 @@ class DprwFbmSimulator(DprwBiFbmSimulator):
         super().__init__(sample_size=sample_size, hurst_parameter=hurst_parameter, bi_factor=1,
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
 
-    def get_fbm(self, is_plot=False, seed=None, plot_path: str = None):
+    def get_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
         fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW', series_name='FBM',
-                                            plot_path=plot_path)
+                                            plot_path=plot_path, y_limits=y_limits)
         return fbm
 
 
@@ -255,7 +258,7 @@ class DprwNegFbmSimulator(DprwSelfSimilarFractalSimulator):
         v[0] = (scipy.special.gamma(h + 0.5) ** 2) / (scipy.special.gamma(h2 + 1) * np.sin(h * np.pi)) - 1 / h2
         return v
 
-    def get_neg_fbm(self, is_plot=False, seed=None, plot_path: str = None):
+    def get_neg_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
         neg_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW', series_name='Neg-FBM',
-                                                plot_path=plot_path)
+                                                plot_path=plot_path, y_limits=y_limits)
         return neg_fbm

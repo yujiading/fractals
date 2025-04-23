@@ -132,10 +132,10 @@ class WoodChanFbmSimulator(WoodChanFgnSimulator):
         v = v / self.sample_size ** h2
         return v
 
-    def get_fbm(self, is_plot=False, seed=None):
+    def get_fbm(self, is_plot=False, seed=None, y_limits: list = None):
         fgn = self.get_fgn(seed=seed, N=self.sample_size, cov=self.fbm_cov)
         fgn = fgn[:self.sample_size]
         fbm = np.cumsum(fgn)
         if is_plot:
-            self.plot(series=fbm, method_name='Wood Chan', series_name='FBM')
+            self.plot(series=fbm, method_name='Wood Chan', series_name='FBM', y_limits=y_limits)
         return fbm

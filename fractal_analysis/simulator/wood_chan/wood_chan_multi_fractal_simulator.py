@@ -151,11 +151,14 @@ class MultiFractalBaseSimulator(ABC):
                 series[i] = np.dot(u, v)
         return series
 
-    def plot(self, series: np.ndarray, method_name: str, series_name: str, hurst_name: str = '', save_path: str = None):
+    def plot(self, series: np.ndarray, method_name: str, series_name: str, hurst_name: str = '', save_path: str = None,
+             y_limits: list = None):
         plt.plot(np.arange(0, self.tmax, self.tmax / self.sample_size), series)
         plt.title(
             f'{method_name} {series_name} simulation with {self.sample_size} samples and {hurst_name} hurst')
         plt.xlabel('Time')
+        if y_limits is not None:
+            plt.ylim(y_limits)
         if save_path is not None:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
         plt.show()
@@ -293,7 +296,8 @@ class WoodChanMbmSimulator(MultiFractalBaseSimulator):
                                                    h=holder_exponent, n=self.sample_size, means=means)
         return v
 
-    def get_mbm(self, is_plot: bool = False, seed: int = None, hurst_name: str = '', plot_path: str = None):
+    def get_mbm(self, is_plot: bool = False, seed: int = None, hurst_name: str = '', plot_path: str = None,
+                y_limits: list = None):
         """simulate a mbm series"""
         means, labels = self.get_kmeans()
         # precalculation of 1D fBm in the length of k with random inputs.
@@ -307,5 +311,5 @@ class WoodChanMbmSimulator(MultiFractalBaseSimulator):
         mbm[-1] = mbm[-2]
         if is_plot:
             self.plot(series=mbm, method_name='Wood and Chan', series_name='MBM', hurst_name=hurst_name,
-                      save_path=plot_path)
+                      save_path=plot_path, y_limits=y_limits)
         return mbm
