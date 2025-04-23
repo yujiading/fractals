@@ -27,17 +27,29 @@ class WoodChanFgnSimulator:
         if not self.std_const > 0:
             raise ValueError(f'std_const must be positive.')
 
-    def _first_line_circulant_matrix(self, m, cov: Callable):
+    def _first_line_circulant_matrix(self, m, cov: Callable, prev_k=None, prev_v=None):
         """
             First line of the circulant matrix C built with covariances of the stationary process.
             References : 1 - Wood and Chan (1994) 2 - Phd Thesis Coeurjolly (2000), Appendix A p.132
             m : power of two larger than 2*(n-1).
         """
-        k = self.tmax * np.arange(0, m)
-        v = cov(k=k)
+        new_k = self.tmax * np.arange(0, m / 2 + 1, dtype=int)
+
+        if prev_k is not None and prev_v is not None:
+            # Reuse previous computed values
+            prev_len = len(prev_k)
+            if prev_len >= len(new_k):
+                v = prev_v[:len(new_k)]
+            else:
+                extra_k = new_k[prev_len:]
+                extra_v = cov(k=extra_k)
+                v = np.concatenate((prev_v, extra_v))
+        else:
+            v = cov(k=new_k)
+
         ind = np.concatenate((np.arange(0, m / 2, dtype=int), np.arange(m / 2, 0, -1, dtype=int)))
         line = v[ind]
-        return line
+        return line, new_k, v
 
     @staticmethod
     def _simulate_w(m, seed: int = None):
@@ -55,19 +67,24 @@ class WoodChanFgnSimulator:
         w = [complex(one_ar, one_ai) for one_ar, one_ai in zip(ar, ai)]
         return w
 
-    def get_fgn(self, cov: Callable, N: int, seed: int = None) -> np.ndarray:
+    def get_fgn(self, cov: Callable, N: int, seed: int = None, is_precise: bool = False) -> np.ndarray:
         """
             seed: generates with a specific random seed.
+            is_precise: Whether to increase m until eigenvalues are all positive (can be slow).
+                        If False, clips negative eigenvalues to a small positive value for stability.
         """
         # Construction of the first line of the circulant matrix C
         m = 2 ** (int(math.log(N - 1) / math.log(2) + 1))
-        eigc = self._first_line_circulant_matrix(m=m, cov=cov)
+        eigc, k_vals, v_vals = self._first_line_circulant_matrix(m=m, cov=cov)
         eigc = fft(eigc)
         # search of the power of two (<2**18) such that eigc is definite positive
-        while any(v <= 0 for v in eigc) and m < 2 ** 17:
-            m = 2 * m
-            eigc = self._first_line_circulant_matrix(m=m, cov=cov)
-            eigc = fft(eigc).real
+        if not is_precise:
+            eigc = np.clip(eigc, 1e-10, None)
+        else:
+            while any(v <= 0 for v in eigc) and m < 2 ** 17:
+                m = 2 * m
+                eigc, k_vals, v_vals = self._first_line_circulant_matrix(m=m, cov=cov, prev_k=k_vals, prev_v=v_vals)
+                eigc = fft(eigc).real
         # simulation of w=(Q)^t Z, where Z leads N(0,I_m) and (Q)_{jk} = m^(-1/2) exp(-2i pi jk/m)
         w = self._simulate_w(m=m, seed=seed)
         # reconstruction of the fgn
@@ -77,11 +94,14 @@ class WoodChanFgnSimulator:
         fgn = fgn.real
         return fgn
 
-    def plot(self, series: np.ndarray, method_name: str, series_name: str, save_path: str = None):
+    def plot(self, series: np.ndarray, method_name: str, series_name: str, save_path: str = None,
+             y_limits: list = None):
         plt.plot(np.arange(0, self.tmax, self.tmax / self.sample_size), series)
         plt.title(
             f'{method_name} {series_name} simulation with {self.sample_size} samples and {self.hurst_parameter} hurst')
         plt.xlabel('Time')
+        if y_limits is not None:
+            plt.ylim(y_limits)
         if save_path is not None:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
         plt.show()
