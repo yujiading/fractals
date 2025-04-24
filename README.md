@@ -298,9 +298,11 @@ dprw_mbm = DprwMbmSimulator(sample_size=sample_size, holder_exponents=holder_exp
 
 #### Plot or seed a simulated series
 
-In all the simulators, you can use ```is_plot``` (default is ```False```) to show or not show the plot of the series. 
+In all simulators, you can use ```is_plot``` (default is ```False```) to show or not show the plot of the series. 
 Set ```is_plot=True``` and ```plot_path="path_to_save/plot_name.png"``` (default is ```None```) to save the plot. 
-Use ```seed```  (default is ```None```) to fix the random state. For example,
+Use ```seed```  (default is ```None```) to fix the random state. Use ```y_limits``` to fix y-axis range. 
+In the mbm simulators, use ```hurst_name``` to name the holder exponent function in plot tile.  
+For example,
 ```
 dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm(is_plot=True, seed=1, plot_path="path_to_save/plot_name.png")
 ```

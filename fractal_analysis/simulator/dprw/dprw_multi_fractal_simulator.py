@@ -120,7 +120,8 @@ class DprwMbmSimulator(MultiFractalBaseSimulator):
         pos = np.sum(M, axis=1)
         return pos
 
-    def get_mbm(self, is_plot: bool = False, seed: int = None, hurst_name: str = '', plot_path: str = None):
+    def get_mbm(self, is_plot: bool = False, seed: int = None, hurst_name: str = '', plot_path: str = None,
+                y_limits: list = None):
         means, labels = self.get_kmeans()
         # precalculation of 1D fBm in the length of k with random inputs.
         base_fbm = self.get_fractal_bases(means=means, seed=seed)
@@ -134,5 +135,6 @@ class DprwMbmSimulator(MultiFractalBaseSimulator):
                 1 / 2) / scipy.special.gamma(self.holder_exponents + 1 / 2)) * (neg_mbm + pos_mbm)
         mbm[-1] = mbm[-2]
         if is_plot:
-            self.plot(series=mbm, method_name='DPRW', series_name='MBM', hurst_name=hurst_name, save_path=plot_path)
+            self.plot(series=mbm, method_name='DPRW', series_name='MBM', hurst_name=hurst_name, save_path=plot_path,
+                      y_limits=y_limits)
         return mbm
