@@ -1,5 +1,5 @@
-from decimal import Decimal, getcontext
 from typing import Callable
+from mpmath import mp, mpf, gamma, sin, hyp2f1
 
 import numpy as np
 import scipy
@@ -61,39 +61,36 @@ class DprwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
                       y_limits=y_limits)
         return self_similar
 
-    def covariance_with_adaptive_precision(self, k, n, hurst, factor, tolerance=0.0001, initial_prec=17, step=5,
-                                           max_prec=1000000):
+    def covariance_with_adaptive_precision(self, k_de, n_de, hurst_de, factor_de, tolerance=0.0001, initial_prec=17,
+                                           step=5, max_prec=1000000):
         """
         Repeatedly calls covariance func with increasing precision until the result stabilizes.
         covariance func should return a Decimal.
         """
-        getcontext().prec = initial_prec
+        mp.dps = initial_prec
 
-        n_de = Decimal(str(n))
-        hurst_de = Decimal(str(hurst))
-        k_de = Decimal(str(k))
-        if factor is not None:
-            factor_de = Decimal(str(factor))
-        else:
-            factor_de = None
-
-        tolerance = Decimal(str(tolerance))
-        v_prev = Decimal('0')
+        tolerance = mpf(str(tolerance))
+        v_prev = mpf('0')
         v = self.covariance_func(k_de=k_de, n_de=n_de, hurst_de=hurst_de, factor_de=factor_de)
 
-        while (v == 0 or abs(v - v_prev) >= tolerance) and getcontext().prec < max_prec:
+        while (v <= 0 or abs(v - v_prev) >= tolerance) and mp.dps < max_prec:
             v_prev = v
-            getcontext().prec += step
+            mp.dps += step
             v = self.covariance_func(k_de=k_de, n_de=n_de, hurst_de=hurst_de, factor_de=factor_de)
 
         return float(v)
 
     def covariance_line(self, k):
+        n_de = mpf(str(self.sample_size))
+        hurst_de = mpf(str(self.hurst_parameter))
+        if self.factor is not None:
+            factor_de = mpf(str(self.factor))
+        else:
+            factor_de = None
         v = np.array([
-            self.covariance_with_adaptive_precision(k=k_ele, n=self.sample_size, hurst=self.hurst_parameter,
-                                                    factor=self.factor) for
-            k_ele in k
-        ])
+            self.covariance_with_adaptive_precision(k_de=mpf(str(k_ele)), n_de=n_de, hurst_de=hurst_de,
+                                                    factor_de=factor_de) for
+            k_ele in k])
         return v
 
 
@@ -123,13 +120,13 @@ class DprwSubFbmSimulator(DprwSelfSimilarFractalSimulator):
                          covariance_func=self.sub_fbm_covariance_func,
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
 
-    def sub_fbm_covariance_func(self, k):
-        h2 = 2 * self.hurst_parameter
-        n = self.sample_size
-        k_h_n = k * self.hurst_parameter / n
-        k_n_2 = k / n / 2
-        v = n ** k_h_n + n ** (-k_h_n) - 0.5 * (
-                (n ** k_n_2 + n ** (-k_n_2)) ** h2 + np.abs(n ** k_n_2 - n ** (-k_n_2)) ** h2)
+    def sub_fbm_covariance_func(self, k_de, n_de, hurst_de, factor_de):
+        h2 = 2 * hurst_de
+        n = n_de
+        k_h_n = k_de * hurst_de / n_de
+        k_n_2 = k_de / n_de / 2
+        v = n ** k_h_n + n ** (-k_h_n) - (
+                (n ** k_n_2 + n ** (-k_n_2)) ** h2 + abs(n ** k_n_2 - n ** (-k_n_2)) ** h2) / 2
         return v
 
     def get_sub_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
@@ -179,7 +176,7 @@ class DprwBiFbmSimulator(DprwSelfSimilarFractalSimulator):
 
         term1 = (A + a) ** bi_factor_de
         term2 = abs(B - b) ** (h2 * bi_factor_de)
-        v = (term1 - term2)/(2 ** bi_factor_de)
+        v = (term1 - term2) / (2 ** bi_factor_de)
 
         return v
 
@@ -217,13 +214,14 @@ class DprwTriFbmSimulator(DprwSelfSimilarFractalSimulator):
                          covariance_func=self.tri_fbm_covariance_func, factor=self.tri_factor,
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
 
-    def tri_fbm_covariance_func(self, k):
-        n = self.sample_size
-        k_h_f_n = k * self.hurst_parameter * self.tri_factor / n
-        k_n_2 = k / n / 2
-        h2 = 2 * self.hurst_parameter
-        v = n ** k_h_f_n + n ** (-k_h_f_n) - np.abs(n ** k_n_2 - n ** (-k_n_2)) ** (
-                h2 * self.tri_factor)
+    def tri_fbm_covariance_func(self, k_de, n_de, hurst_de, factor_de):
+        tri_factor = factor_de
+        n = n_de
+        k_h_f_n = k_de * hurst_de * tri_factor / n_de
+        k_n_2 = k_de / n_de / 2
+        h2 = 2 * hurst_de
+        v = n ** k_h_f_n + n ** (-k_h_f_n) - abs(n ** k_n_2 - n ** (-k_n_2)) ** (
+                h2 * tri_factor)
         return v
 
     def get_tri_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
@@ -290,17 +288,20 @@ class DprwNegFbmSimulator(DprwSelfSimilarFractalSimulator):
                          covariance_func=self.neg_fbm_covariance_func,
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
 
-    def neg_fbm_covariance_func(self, k):
-        n = self.sample_size
-        h = self.hurst_parameter
+    def neg_fbm_covariance_func(self, k_de, n_de, hurst_de, factor_de):
+        n = n_de
+        h = hurst_de
         h2 = 2 * h
-        numerator = (scipy.special.gamma(h + 0.5)) ** 2 * (n ** (h * (k / n)) + n ** (h * (-k / n)) - (
-                (np.abs(1 - n ** (-k / n))) ** h) * (np.abs(1 - n ** (k / n))) ** h)
-        denominator = 2 * scipy.special.gamma(h2 + 1) * np.sin(h * np.pi)
-        term = -n ** (-np.abs(k / n) / 2) / (h + 0.5)
-        summ = scipy.special.hyp2f1(0.5 - h, 1, h + 3 / 2, n ** (-np.abs(k / n)))
-        v = numerator / denominator + term * summ
-        v[0] = (scipy.special.gamma(h + 0.5) ** 2) / (scipy.special.gamma(h2 + 1) * np.sin(h * np.pi)) - 1 / h2
+        k = k_de
+        if k_de == mpf('0'):
+            v = (gamma(h + 0.5) ** 2) / (gamma(h2 + 1) * sin(h * mp.pi)) - 1 / h2
+        else:
+            numerator = (gamma(h + 0.5)) ** 2 * (n ** (h * (k / n)) + n ** (h * (-k / n)) - (
+                    (abs(1 - n ** (-k / n))) ** h) * (abs(1 - n ** (k / n))) ** h)
+            denominator = 2 * gamma(h2 + 1) * sin(h * mp.pi)
+            term = -n ** (-abs(k / n) / 2) / (h + 0.5)
+            summ = hyp2f1(0.5 - h, 1, h + 3 / 2, n ** (-abs(k / n)))
+            v = numerator / denominator + term * summ
         return v
 
     def get_neg_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
