@@ -269,7 +269,7 @@ from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwTriFbmSim
 ```
 To simulate a tri-FBM series with ```1000``` samples, ```0.8``` hurst parameter, and ```0.2``` tri factor,
 ```
-dprw_tri_fbm = DprwTriFbmSimulator(sample_size=1000, hurst_parameter=0.8, tri_factor=0.2).get_bi_fbm()
+dprw_tri_fbm = DprwTriFbmSimulator(sample_size=1000, hurst_parameter=0.8, tri_factor=0.2).get_tri_fbm()
 ```
 When ```tri_factor=1```, tri-FBM becomes FBM with multiplier 2.
 
