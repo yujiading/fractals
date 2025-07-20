@@ -30,32 +30,44 @@ class DprwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
             tmax: generates a self similar process using a specific size of time support, i.e. the time runs in [0,tmax]; if tmax is not specified, the default value is tmax = 1.
             std_const: generates a self similar process using a specific standard deviation at instant t = 1; if std_const is not specified, the default value is std_const = 1.
         """
-
-        super().__init__(sample_size=sample_size, hurst_parameter=hurst_parameter, tmax=tmax, std_const=std_const)
+        self.dprw_size = sample_size
+        scaler = -np.log(1 / self.dprw_size + 1)
+        self.fgn_size = np.ceil(scipy.special.lambertw(z=scaler, k=-1).real / scaler).astype(int)
+        super().__init__(sample_size=self.fgn_size, hurst_parameter=hurst_parameter, tmax=tmax, std_const=std_const)
         self.covariance_func = covariance_func
         if not isinstance(lamperti_multiplier, int) and lamperti_multiplier <= 0:
             raise ValueError(f'lamperti_multiplier must be a positive integer.')
         self.lamperti_multiplier = lamperti_multiplier
-        self.lamperti_series_len = self.lamperti_multiplier * self.sample_size
+        self.lamperti_series_len = self.lamperti_multiplier * self.fgn_size
         self.factor = factor
 
     @property
     def _lamperti_subseq_index(self):
-        seires_step = self.tmax / self.sample_size
+        seires_step = self.tmax / self.fgn_size
         series_t = np.arange(start=seires_step, stop=self.tmax + seires_step, step=seires_step)
         # shifting negative time index to positive time index
         log_series_t = np.log(series_t) + np.abs(np.log(series_t[0]))
         max_log_series_exp_t = np.max(log_series_t)
         lamperti_subseq_index = np.rint(log_series_t * self.lamperti_series_len / max_log_series_exp_t) - 1
         lamperti_subseq_index[0] = 0
-        return series_t, lamperti_subseq_index.astype(int)
+        return lamperti_subseq_index.astype(int)
+
+    @property
+    def _scaling_subseq_index(self):
+        seires_step = self.tmax / self.fgn_size
+        series_t = np.arange(start=seires_step, stop=self.tmax + seires_step, step=seires_step)[:self.dprw_size]
+        scaling_subseq_index = np.floor(
+            (np.log(series_t) / np.log(self.fgn_size) + 1) * self.fgn_size)-1
+        scaling_subseq_index[0] = 0
+        return scaling_subseq_index.astype(int)
 
     def get_self_similar_process(self, is_plot=False, method_name=None, series_name=None, seed=None,
                                  plot_path: str = None, y_limits: list = None):
-        series_t, lamperti_subseq_index = self._lamperti_subseq_index
+        seires_step = self.tmax / self.dprw_size
+        series_t = np.arange(start=seires_step, stop=self.tmax + seires_step, step=seires_step)
         lamp_fgn = self.get_fgn(seed=seed, N=self.lamperti_series_len, cov=self.covariance_line)
         lamp_fgn = lamp_fgn - lamp_fgn[0]
-        self_similar = series_t ** self.hurst_parameter * lamp_fgn[lamperti_subseq_index]
+        self_similar = series_t ** self.hurst_parameter * lamp_fgn[self._lamperti_subseq_index][self._scaling_subseq_index]
         if is_plot:
             self.plot(series=self_similar, method_name=method_name, series_name=series_name, save_path=plot_path,
                       y_limits=y_limits)
@@ -81,7 +93,7 @@ class DprwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
         return float(v)
 
     def covariance_line(self, k):
-        n_de = mpf(str(self.sample_size))
+        n_de = mpf(str(self.fgn_size))
         hurst_de = mpf(str(self.hurst_parameter))
         if self.factor is not None:
             factor_de = mpf(str(self.factor))

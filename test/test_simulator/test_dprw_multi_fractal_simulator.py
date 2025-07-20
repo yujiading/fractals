@@ -17,9 +17,17 @@ def test_riemann_louville_mbm():
     print(simulator.riemann_louville_mbm)
 
 
-def test_get_mbm():
+def test_get_mbm_case_1():
     sample_size = 1000
     t = np.linspace(0, 1, sample_size)
     holder_exponents = 0.9 + 0.01 * np.sin(4 * np.pi * t)
+    DprwMbmSimulator(sample_size=sample_size, holder_exponents=holder_exponents).get_mbm(is_plot=True, seed=1,
+                                                                                         hurst_name='0.9+0.01sin(4pit)')
+
+
+def test_get_mbm_case_2():
+    sample_size = 1000
+    t = np.linspace(0, 1, sample_size)
+    holder_exponents = 0.5 + 0.3 * np.sin(4 * np.pi * t)
     DprwMbmSimulator(sample_size=sample_size, holder_exponents=holder_exponents).get_mbm(is_plot=True, seed=1,
                                                                                          hurst_name='0.5+0.3sin(4pit)')
