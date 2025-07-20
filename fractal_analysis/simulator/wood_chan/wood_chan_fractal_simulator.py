@@ -96,9 +96,9 @@ class WoodChanFgnSimulator:
 
     def plot(self, series: np.ndarray, method_name: str, series_name: str, save_path: str = None,
              y_limits: list = None):
-        plt.plot(np.arange(0, self.tmax, self.tmax / self.sample_size), series)
+        plt.plot(np.arange(0, self.tmax, self.tmax / len(series)), series)
         plt.title(
-            f'{method_name} {series_name} simulation with {self.sample_size} samples and {self.hurst_parameter} hurst')
+            f'{method_name} {series_name} simulation with {len(series)} samples and {self.hurst_parameter} hurst')
         plt.xlabel('Time')
         if y_limits is not None:
             plt.ylim(y_limits)
