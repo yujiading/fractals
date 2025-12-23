@@ -7,7 +7,7 @@ import scipy
 from fractal_analysis.simulator.wood_chan.wood_chan_fractal_simulator import WoodChanFgnSimulator
 
 
-class DprwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
+class DpwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
@@ -30,8 +30,8 @@ class DprwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
             tmax: generates a self similar process using a specific size of time support, i.e. the time runs in [0,tmax]; if tmax is not specified, the default value is tmax = 1.
             std_const: generates a self similar process using a specific standard deviation at instant t = 1; if std_const is not specified, the default value is std_const = 1.
         """
-        self.dprw_size = sample_size
-        scaler = -np.log(1 / self.dprw_size + 1)
+        self.dpw_size = sample_size
+        scaler = -np.log(1 / self.dpw_size + 1)
         self.fgn_size = np.ceil(scipy.special.lambertw(z=scaler, k=-1).real / scaler).astype(int)
         super().__init__(sample_size=self.fgn_size, hurst_parameter=hurst_parameter, tmax=tmax, std_const=std_const)
         self.covariance_func = covariance_func
@@ -55,7 +55,7 @@ class DprwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
     @property
     def _scaling_subseq_index(self):
         seires_step = self.tmax / self.fgn_size
-        series_t = np.arange(start=seires_step, stop=self.tmax + seires_step, step=seires_step)[:self.dprw_size]
+        series_t = np.arange(start=seires_step, stop=self.tmax + seires_step, step=seires_step)[:self.dpw_size]
         scaling_subseq_index = np.floor(
             (np.log(series_t) / np.log(self.fgn_size) + 1) * self.fgn_size)-1
         scaling_subseq_index[0] = 0
@@ -63,7 +63,7 @@ class DprwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
 
     def get_self_similar_process(self, is_plot=False, method_name=None, series_name=None, seed=None,
                                  plot_path: str = None, y_limits: list = None):
-        seires_step = self.tmax / self.dprw_size
+        seires_step = self.tmax / self.dpw_size
         series_t = np.arange(start=seires_step, stop=self.tmax + seires_step, step=seires_step)
         lamp_fgn = self.get_fgn(seed=seed, N=self.lamperti_series_len, cov=self.covariance_line)
         lamp_fgn = lamp_fgn - lamp_fgn[0]
@@ -106,7 +106,7 @@ class DprwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
         return v
 
 
-class DprwSubFbmSimulator(DprwSelfSimilarFractalSimulator):
+class DpwSubFbmSimulator(DpwSelfSimilarFractalSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
@@ -142,12 +142,12 @@ class DprwSubFbmSimulator(DprwSelfSimilarFractalSimulator):
         return v
 
     def get_sub_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
-        sub_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW', series_name='Sub-FBM',
+        sub_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPW', series_name='Sub-FBM',
                                                 plot_path=plot_path, y_limits=y_limits)
         return sub_fbm
 
 
-class DprwBiFbmSimulator(DprwSelfSimilarFractalSimulator):
+class DpwBiFbmSimulator(DpwSelfSimilarFractalSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
@@ -193,13 +193,13 @@ class DprwBiFbmSimulator(DprwSelfSimilarFractalSimulator):
         return v
 
     def get_bi_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
-        bi_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW',
+        bi_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPW',
                                                series_name=f'{self.bi_factor} Bi-FBM', plot_path=plot_path,
                                                y_limits=y_limits)
         return bi_fbm
 
 
-class DprwTriFbmSimulator(DprwSelfSimilarFractalSimulator):
+class DpwTriFbmSimulator(DpwSelfSimilarFractalSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
@@ -237,13 +237,13 @@ class DprwTriFbmSimulator(DprwSelfSimilarFractalSimulator):
         return v
 
     def get_tri_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
-        tri_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW',
+        tri_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPW',
                                                 series_name=f'{self.tri_factor} Tri-FBM', plot_path=plot_path,
                                                 y_limits=y_limits)
         return tri_fbm
 
 
-class DprwFbmSimulator(DprwBiFbmSimulator):
+class DpwFbmSimulator(DpwBiFbmSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
@@ -269,12 +269,12 @@ class DprwFbmSimulator(DprwBiFbmSimulator):
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
 
     def get_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
-        fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW', series_name='FBM',
+        fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPW', series_name='FBM',
                                             plot_path=plot_path, y_limits=y_limits)
         return fbm
 
 
-class DprwNegFbmSimulator(DprwSelfSimilarFractalSimulator):
+class DpwNegFbmSimulator(DpwSelfSimilarFractalSimulator):
     """
         Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
                       with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
@@ -317,6 +317,6 @@ class DprwNegFbmSimulator(DprwSelfSimilarFractalSimulator):
         return v
 
     def get_neg_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
-        neg_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPRW', series_name='Neg-FBM',
+        neg_fbm = self.get_self_similar_process(is_plot=is_plot, seed=seed, method_name='DPW', series_name='Neg-FBM',
                                                 plot_path=plot_path, y_limits=y_limits)
         return neg_fbm

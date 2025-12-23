@@ -11,13 +11,13 @@ Fractal and multifractal methods, including
   - Wood and Chan methods:
     - Wood and Chan fractional Brownian motion (FBM) simulator
     - Wood and Chan multifractional Brownian motion (MBM) simulator
-  - DPRW methods:
-    - DPRW fractional Brownian motion (FBM) simulator
-    - DPRW sub-fractional Brownian motion (sub-FBM) simulator
-    - DPRW bi-fractional Brownian motion (bi-FBM) simulator
-    - DPRW tri-fractional Brownian motion (tri-FBM) simulator
-    - DPRW general fractional self similar process simulator
-    - DPRW multifractional Brownian motion (MBM) simulator
+  - DPW methods:
+    - DPW fractional Brownian motion (FBM) simulator
+    - DPW sub-fractional Brownian motion (sub-FBM) simulator
+    - DPW bi-fractional Brownian motion (bi-FBM) simulator
+    - DPW tri-fractional Brownian motion (tri-FBM) simulator
+    - DPW general fractional self similar process simulator
+    - DPW multifractional Brownian motion (MBM) simulator
 
 ## FBM / MBM tester
 Test if a series is FBM (MBM) given the hurst parameter (hurst exponents series).
@@ -82,7 +82,7 @@ and based on a Matlab library ```Fraclab``` and its function ```mBmQuantifKrigea
 
 >https://project.inria.fr/fraclab
 
-## DPRW FBM / sub-FBM / bi-FBM / tri-FBM / self similar fractal simulator
+## DPW FBM / sub-FBM / bi-FBM / tri-FBM / self similar fractal simulator
 Generate a fractional self similar processes. 
 
 The main idea is:  use Lamperti transform to transfer a self-similar process to a stationary process, and
@@ -98,8 +98,8 @@ The implementation is based on our paper:
 [//]: # (> #todo: add paper link )
 
 
-## DPRW MBM simulator
-Generates a Multi-fractional Brownian Motion (mBm) using DPRW Lamperti Transformation, some krigging and a prequantification.
+## DPW MBM simulator
+Generates a Multi-fractional Brownian Motion (mBm) using DPW Lamperti Transformation, some krigging and a prequantification.
 
 The implementation is based on our paper:
 >Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
@@ -232,68 +232,68 @@ holder_exponents = 0.5 + 0.3 * np.sin(4 * np.pi * t)
 woodchan_mbm = WoodChanMbmSimulator(sample_size=sample_size,holder_exponents=holder_exponents).get_mbm()
 ```
 
-#### DPRW FBM simulator
+#### DPW FBM simulator
 Import:
 ```
-from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwFbmSimulator
+from fractal_analysis.simulator.dpw.dpw_fractal_simulator import DpwFbmSimulator
 ```
 To simulate a FBM series with ```1000``` samples and ```0.8``` hurst parameter,
 ```
-dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm()
+dpw_fbm = DpwFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm()
 ```
 
-#### DPRW sub-FBM simulator
+#### DPW sub-FBM simulator
 Import:
 ```
-from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwSubFbmSimulator
+from fractal_analysis.simulator.dpw.dpw_fractal_simulator import DpwSubFbmSimulator
 ```
 To simulate a sub-FBM series with ```1000``` samples and ```0.8``` hurst parameter,
 ```
-dprw_sub_fbm = DprwSubFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_sub_fbm()
+dpw_sub_fbm = DpwSubFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_sub_fbm()
 ```
-#### DPRW bi-FBM simulator
+#### DPW bi-FBM simulator
 Import:
 ```
-from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwBiFbmSimulator
+from fractal_analysis.simulator.dpw.dpw_fractal_simulator import DpwBiFbmSimulator
 ```
 To simulate a bi-FBM series with ```1000``` samples, ```0.8``` hurst parameter, and ```0.2``` bi factor,
 ```
-dprw_bi_fbm = DprwBiFbmSimulator(sample_size=1000, hurst_parameter=0.8, bi_factor=0.2).get_bi_fbm()
+dpw_bi_fbm = DpwBiFbmSimulator(sample_size=1000, hurst_parameter=0.8, bi_factor=0.2).get_bi_fbm()
 ```
 When ```bi_factor=1```, bi-FBM becomes FBM
 
-#### DPRW tri-FBM simulator
+#### DPW tri-FBM simulator
 Import:
 ```
-from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwTriFbmSimulator
+from fractal_analysis.simulator.dpw.dpw_fractal_simulator import DpwTriFbmSimulator
 ```
 To simulate a tri-FBM series with ```1000``` samples, ```0.8``` hurst parameter, and ```0.2``` tri factor,
 ```
-dprw_tri_fbm = DprwTriFbmSimulator(sample_size=1000, hurst_parameter=0.8, tri_factor=0.2).get_tri_fbm()
+dpw_tri_fbm = DpwTriFbmSimulator(sample_size=1000, hurst_parameter=0.8, tri_factor=0.2).get_tri_fbm()
 ```
 When ```tri_factor=1```, tri-FBM becomes FBM with multiplier 2.
 
-#### DPRW self similar fractal simulator
+#### DPW self similar fractal simulator
 Import:
 ```
-from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwSelfSimilarFractalSimulator
+from fractal_analysis.simulator.dpw.dpw_fractal_simulator import DpwSelfSimilarFractalSimulator
 ```
 To simulate a customized self similar fractal series, you need to input ```covariance_func```. For example,
 ```
-dprw_self_similar_fractal = DprwSelfSimilarFractalSimulator(sample_size, hurst_parameter, covariance_func).get_self_similar_process()
+dpw_self_similar_fractal = DpwSelfSimilarFractalSimulator(sample_size, hurst_parameter, covariance_func).get_self_similar_process()
 ```
 
-#### DPRW MBM simulator
+#### DPW MBM simulator
 Import:
 ```
-from fractal_analysis.simulator.dprw.dprw_multi_fractal_simulator import DprwMbmSimulator
+from fractal_analysis.simulator.dpw.dpw_multi_fractal_simulator import DpwMbmSimulator
 ```
 To simulate a MBM series with ```1000``` samples and a sin shape holder function,
 ```
 sample_size = 1000
 t = np.linspace(0, 1, sample_size)
 holder_exponents = 0.5 + 0.3 * np.sin(4 * np.pi * t)
-dprw_mbm = DprwMbmSimulator(sample_size=sample_size, holder_exponents=holder_exponents).get_mbm()
+dpw_mbm = DpwMbmSimulator(sample_size=sample_size, holder_exponents=holder_exponents).get_mbm()
 ```
 
 #### Plot or seed a simulated series
@@ -304,12 +304,12 @@ Use ```seed```  (default is ```None```) to fix the random state. Use ```y_limits
 In the mbm simulators, use ```hurst_name``` to name the holder exponent function in plot tile.  
 For example,
 ```
-dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm(is_plot=True, seed=1, plot_path="path_to_save/plot_name.png")
+dpw_fbm = DpwFbmSimulator(sample_size=1000, hurst_parameter=0.8).get_fbm(is_plot=True, seed=1, plot_path="path_to_save/plot_name.png")
 ```
 
-#### To use ```lamperti_multiplier``` in DPRW simulators
+#### To use ```lamperti_multiplier``` in DPW simulators
 ```lamperti_multiplier``` is a positive integer used for Lamperti transform. 
 Bigger value (usually <=10) provides more accuracy; default value is 5. For example,
 ```
-dprw_fbm = DprwFbmSimulator(sample_size=1000, hurst_parameter=0.8, lamperti_multiplier=10).get_fbm()
+dpw_fbm = DpwFbmSimulator(sample_size=1000, hurst_parameter=0.8, lamperti_multiplier=10).get_fbm()
 ```

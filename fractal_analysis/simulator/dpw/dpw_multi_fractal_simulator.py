@@ -1,13 +1,13 @@
 import numpy as np
 import scipy
 
-from fractal_analysis.simulator.dprw.dprw_fractal_simulator import DprwNegFbmSimulator
+from fractal_analysis.simulator.dpw.dpw_fractal_simulator import DpwNegFbmSimulator
 from fractal_analysis.simulator.wood_chan.wood_chan_multi_fractal_simulator import MultiFractalBaseSimulator
 
 
-class DprwMbmSimulator(MultiFractalBaseSimulator):
+class DpwMbmSimulator(MultiFractalBaseSimulator):
     """
-        Main idea: generates a Multi-fractional Brownian Motion (mBm) using DPRW
+        Main idea: generates a Multi-fractional Brownian Motion (mBm) using DPW
                    Lamperti Transformation, some krigging and a prequantification.
         Reference: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulating Multifractional Brownian
                    Motion Based on Lamperti Transformation". # todo: add source link
@@ -30,15 +30,15 @@ class DprwMbmSimulator(MultiFractalBaseSimulator):
         self.lamperti_multiplier = lamperti_multiplier
 
     def get_fractal_base_func(self, mean: float, seed: int):
-        neg_fbm_simulator = DprwNegFbmSimulator(sample_size=self.sample_size, hurst_parameter=mean, tmax=self.tmax,
+        neg_fbm_simulator = DpwNegFbmSimulator(sample_size=self.sample_size, hurst_parameter=mean, tmax=self.tmax,
                                                 std_const=self.std_const, lamperti_multiplier=self.lamperti_multiplier)
         return neg_fbm_simulator.get_neg_fbm(seed=seed)
 
     @staticmethod
     def neg_fbm_covariance_func(t, s, h1, h2):
-        # todo: combine with dprw_fractal_simulator.DprwNegFbmSimulator.neg_fbm_covariance_func
+        # todo: combine with dpw_fractal_simulator.DpwNegFbmSimulator.neg_fbm_covariance_func
         """
-            Covariance function of two paths using DPRW Lamperti transformation
+            Covariance function of two paths using DPW Lamperti transformation
             on the negative part of mBm simulation. Corresponding matlab func: covm.m
             t : time index of path 1
             s : time index of path 2, assume t>s
@@ -135,6 +135,6 @@ class DprwMbmSimulator(MultiFractalBaseSimulator):
                 1 / 2) / scipy.special.gamma(self.holder_exponents + 1 / 2)) * (neg_mbm + pos_mbm)
         mbm[-1] = mbm[-2]
         if is_plot:
-            self.plot(series=mbm, method_name='DPRW', series_name='MBM', hurst_name=hurst_name, save_path=plot_path,
+            self.plot(series=mbm, method_name='DPW', series_name='MBM', hurst_name=hurst_name, save_path=plot_path,
                       y_limits=y_limits)
         return mbm
