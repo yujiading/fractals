@@ -24,11 +24,12 @@ def test_dpw_bi_fbm_simulator():
 
 
 def test_dpw_tri_fbm_simulator():
-    tri_fbm = DpwTriFbmSimulator(sample_size=1000, hurst_parameter=0.8, tri_factor=0.2).get_tri_fbm(is_plot=True,
-                                                                                                     seed=1)
-    tri_fbm = DpwTriFbmSimulator(sample_size=1000, hurst_parameter=0.2, tri_factor=0.2).get_tri_fbm(is_plot=True,
-                                                                                                     seed=1)
-    tri_fbm = DpwTriFbmSimulator(sample_size=1000, hurst_parameter=0.2, tri_factor=1).get_tri_fbm(is_plot=True, seed=1)
+    # tri_fbm = DpwTriFbmSimulator(sample_size=1000, hurst_parameter=0.8, tri_factor=0.2).get_tri_fbm(is_plot=True,
+    #                                                                                                  seed=1)
+    tri_fbm = DpwTriFbmSimulator(sample_size=1000, hurst_parameter=0.2, tri_factor=0.5).get_tri_fbm(is_plot=True,
+                                                                                                     seed=19)
+    # tri_fbm = DpwTriFbmSimulator(sample_size=1000, hurst_parameter=0.2, tri_factor=0.8).get_tri_fbm(is_plot=True, seed=1)
+    # tri_fbm = DpwTriFbmSimulator(sample_size=1000, hurst_parameter=0.8, tri_factor=0.8).get_tri_fbm(is_plot=True, seed=1)
 
 
 def test_dpw_fbm_simulator():

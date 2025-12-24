@@ -168,6 +168,8 @@ class DpwBiFbmSimulator(DpwSelfSimilarFractalSimulator):
             std_const: generates bi-FBM using a specific standard deviation at instant t = 1; if std_const is not specified, the default value is std_const = 1.
         """
         self.bi_factor = bi_factor
+        if self.bi_factor <= 0 or self.bi_factor > 1:
+            raise ValueError("bi_factor must be in (0,1]")
         super().__init__(sample_size=sample_size, hurst_parameter=hurst_parameter,
                          covariance_func=self.bi_fbm_covariance_func, factor=self.bi_factor,
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
@@ -214,11 +216,13 @@ class DpwTriFbmSimulator(DpwSelfSimilarFractalSimulator):
             sample_size: is the length of samples generated; it is a positive integer.
             hurst_parameter: is a real value in (0:1) that governs both the pointwise regularity and the shape around 0 of the power spectrum.
             lamperti_multiplier: used for Lamperti transform; bigger value (usually <=10) provides more accuracy; default value is 5
-            tri_factor: (0,1]; when it is 1, the series becomes FBM with a constant multiplier 2.
+            tri_factor: (0,1).
             tmax: generates tri-FBM using a specific size of time support, i.e. the time runs in [0,tmax]; if tmax is not specified, the default value is tmax = 1.
             std_const: generates tri-FBM using a specific standard deviation at instant t = 1; if std_const is not specified, the default value is std_const = 1.
         """
         self.tri_factor = tri_factor
+        if self.tri_factor <= 0 or self.tri_factor >= 1:
+            raise ValueError('tri_factor must be in (0,1)')
         super().__init__(sample_size=sample_size, hurst_parameter=hurst_parameter,
                          covariance_func=self.tri_fbm_covariance_func, factor=self.tri_factor,
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
@@ -228,7 +232,7 @@ class DpwTriFbmSimulator(DpwSelfSimilarFractalSimulator):
         n = n_de
         k_h_f_n = k_de * hurst_de * tri_factor / n_de
         h_k_d = hurst_de * k_de / n_de
-        v = n ** k_h_f_n + n ** (-k_h_f_n) - abs(n ** h_k_d - n ** (-h_k_d)) ** tri_factor
+        v = n ** k_h_f_n + n ** (-k_h_f_n) - abs(n ** h_k_d + n ** (-h_k_d)) ** tri_factor
         return v
 
     def get_tri_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
