@@ -92,8 +92,7 @@ The main idea is:  use Lamperti transform to transfer a self-similar process to 
                    the series. 
 
 The implementation is based on our paper:
->Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion." 
+>Y. Ding, Q. Peng, W. Wu "A General Method for Simulating H-self-similar Processes." 
 
 [//]: # (> #todo: add paper link )
 
@@ -102,8 +101,7 @@ The implementation is based on our paper:
 Generates a Multi-fractional Brownian Motion (mBm) using DPW Lamperti Transformation, some krigging and a prequantification.
 
 The implementation is based on our paper:
->Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion." 
+>Y. Ding, Q. Peng, W. Wu "A General Method for Simulating H-self-similar Processes." 
 
 [//]: # (> #todo: add paper link )
 

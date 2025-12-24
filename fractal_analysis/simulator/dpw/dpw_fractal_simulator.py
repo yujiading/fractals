@@ -9,8 +9,7 @@ from fractal_analysis.simulator.wood_chan.wood_chan_fractal_simulator import Woo
 
 class DpwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
     """
-        Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
+        Source paper: Y. Ding, Q. Peng, W. Wu "A General Method for Simulating H-self-similar Processes." todo: add source paper link
         Main idea: we use Lamperti transform to transfer a self-similar process to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical
@@ -57,7 +56,7 @@ class DpwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
         seires_step = self.tmax / self.fgn_size
         series_t = np.arange(start=seires_step, stop=self.tmax + seires_step, step=seires_step)[:self.dpw_size]
         scaling_subseq_index = np.floor(
-            (np.log(series_t) / np.log(self.fgn_size) + 1) * self.fgn_size)-1
+            (np.log(series_t) / np.log(self.fgn_size) + 1) * self.fgn_size) - 1
         scaling_subseq_index[0] = 0
         return scaling_subseq_index.astype(int)
 
@@ -67,7 +66,8 @@ class DpwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
         series_t = np.arange(start=seires_step, stop=self.tmax + seires_step, step=seires_step)
         lamp_fgn = self.get_fgn(seed=seed, N=self.lamperti_series_len, cov=self.covariance_line)
         lamp_fgn = lamp_fgn - lamp_fgn[0]
-        self_similar = series_t ** self.hurst_parameter * lamp_fgn[self._lamperti_subseq_index][self._scaling_subseq_index]
+        self_similar = series_t ** self.hurst_parameter * lamp_fgn[self._lamperti_subseq_index][
+            self._scaling_subseq_index]
         if is_plot:
             self.plot(series=self_similar, method_name=method_name, series_name=series_name, save_path=plot_path,
                       y_limits=y_limits)
@@ -108,8 +108,7 @@ class DpwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
 
 class DpwSubFbmSimulator(DpwSelfSimilarFractalSimulator):
     """
-        Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
+        Source paper: Y. Ding, Q. Peng, W. Wu "A General Method for Simulating H-self-similar Processes." todo: add source paper link
         Main idea: we use Lamperti transform to transfer sub-FBM (self-similar process) to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical
@@ -149,8 +148,7 @@ class DpwSubFbmSimulator(DpwSelfSimilarFractalSimulator):
 
 class DpwBiFbmSimulator(DpwSelfSimilarFractalSimulator):
     """
-        Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
+        Source paper: Y. Ding, Q. Peng, W. Wu "A General Method for Simulating H-self-similar Processes." todo: add source paper link
         Main idea: we use Lamperti transform to transfer Bi-FBM (self-similar process) to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical
@@ -201,8 +199,7 @@ class DpwBiFbmSimulator(DpwSelfSimilarFractalSimulator):
 
 class DpwTriFbmSimulator(DpwSelfSimilarFractalSimulator):
     """
-        Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
+        Source paper: Y. Ding, Q. Peng, W. Wu "A General Method for Simulating H-self-similar Processes." todo: add source paper link
         Main idea: we use Lamperti transform to transfer tri-FBM (self-similar process) to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical
@@ -230,10 +227,8 @@ class DpwTriFbmSimulator(DpwSelfSimilarFractalSimulator):
         tri_factor = factor_de
         n = n_de
         k_h_f_n = k_de * hurst_de * tri_factor / n_de
-        k_n_2 = k_de / n_de / 2
-        h2 = 2 * hurst_de
-        v = n ** k_h_f_n + n ** (-k_h_f_n) - abs(n ** k_n_2 - n ** (-k_n_2)) ** (
-                h2 * tri_factor)
+        h_k_d = hurst_de * k_de / n_de
+        v = n ** k_h_f_n + n ** (-k_h_f_n) - abs(n ** h_k_d - n ** (-h_k_d)) ** tri_factor
         return v
 
     def get_tri_fbm(self, is_plot=False, seed=None, plot_path: str = None, y_limits: list = None):
@@ -245,8 +240,7 @@ class DpwTriFbmSimulator(DpwSelfSimilarFractalSimulator):
 
 class DpwFbmSimulator(DpwBiFbmSimulator):
     """
-        Source paper: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
+        Source paper: Y. Ding, Q. Peng, W. Wu "A General Method for Simulating H-self-similar Processes." todo: add source paper link
         Main idea: we use Lamperti transform to transfer FBM (self-similar process) to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical
@@ -276,8 +270,7 @@ class DpwFbmSimulator(DpwBiFbmSimulator):
 
 class DpwNegFbmSimulator(DpwSelfSimilarFractalSimulator):
     """
-        Source paper: Y. Ding, Q. Peng, G. Ren "Simulation of Self-similar Processes using Lamperti Transformation
-                      with An Application to Generate Multifractional Brownian Motion" todo: add source paper link
+        Source paper: Y. Ding, Q. Peng, W. Wu "A General Method for Simulating H-self-similar Processes." todo: add source paper link
         Main idea: we use Lamperti transform to transfer Neg-FBM (self-similar process) to a stationary process, and
                    simulate the stationary process using circulant embedding approach (Wood, A.T.A., Chan, G., 1994.
                    Simulation of stationary Gaussian processes in [0, 1]^d. Journal of computational and graphical

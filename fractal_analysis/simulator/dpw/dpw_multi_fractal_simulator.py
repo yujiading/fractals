@@ -9,8 +9,7 @@ class DpwMbmSimulator(MultiFractalBaseSimulator):
     """
         Main idea: generates a Multi-fractional Brownian Motion (mBm) using DPW
                    Lamperti Transformation, some krigging and a prequantification.
-        Reference: Y. Ding, Q. Peng, G. Ren, W. Wu "Simulating Multifractional Brownian
-                   Motion Based on Lamperti Transformation". # todo: add source link
+        Reference: Y. Ding, Q. Peng, W. Wu "A General Method for Simulating H-self-similar Processes.". # todo: add source link
     """
 
     def __init__(self, sample_size: int, holder_exponents: np.ndarray, pre_quant_level: int = 10,
