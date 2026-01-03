@@ -98,7 +98,7 @@ class WoodChanFgnSimulator:
              y_limits: list = None):
         plt.plot(np.arange(0, self.tmax, self.tmax / len(series)), series)
         plt.title(
-            f'{method_name} {series_name} simulation with {len(series)} samples and {self.hurst_parameter} hurst')
+            f'{method_name} {series_name} simulation with {len(series)} samples and {round(self.hurst_parameter,2)} hurst')
         plt.xlabel('Time')
         if y_limits is not None:
             plt.ylim(y_limits)

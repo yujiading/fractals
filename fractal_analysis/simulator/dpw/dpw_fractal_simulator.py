@@ -65,7 +65,7 @@ class DpwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
         seires_step = self.tmax / self.dpw_size
         series_t = np.arange(start=seires_step, stop=self.tmax + seires_step, step=seires_step)
         lamp_fgn = self.get_fgn(seed=seed, N=self.lamperti_series_len, cov=self.covariance_line)
-        lamp_fgn = lamp_fgn - lamp_fgn[0]
+        # lamp_fgn = lamp_fgn - lamp_fgn[0]
         self_similar = series_t ** self.hurst_parameter * lamp_fgn[self._lamperti_subseq_index][
             self._scaling_subseq_index]
         if is_plot:
@@ -170,7 +170,7 @@ class DpwBiFbmSimulator(DpwSelfSimilarFractalSimulator):
         self.bi_factor = bi_factor
         if self.bi_factor <= 0 or self.bi_factor > 1:
             raise ValueError("bi_factor must be in (0,1]")
-        super().__init__(sample_size=sample_size, hurst_parameter=hurst_parameter,
+        super().__init__(sample_size=sample_size, hurst_parameter=hurst_parameter*bi_factor,
                          covariance_func=self.bi_fbm_covariance_func, factor=self.bi_factor,
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
 
@@ -223,7 +223,7 @@ class DpwTriFbmSimulator(DpwSelfSimilarFractalSimulator):
         self.tri_factor = tri_factor
         if self.tri_factor <= 0 or self.tri_factor >= 1:
             raise ValueError('tri_factor must be in (0,1)')
-        super().__init__(sample_size=sample_size, hurst_parameter=hurst_parameter,
+        super().__init__(sample_size=sample_size, hurst_parameter=hurst_parameter*tri_factor,
                          covariance_func=self.tri_fbm_covariance_func, factor=self.tri_factor,
                          lamperti_multiplier=lamperti_multiplier, tmax=tmax, std_const=std_const)
 
