@@ -71,6 +71,7 @@ class DpwSelfSimilarFractalSimulator(WoodChanFgnSimulator):
         # lamp_fgn = lamp_fgn - lamp_fgn[0]
         # self_similar = series_t ** self.hurst_parameter * lamp_fgn[self._lamperti_subseq_index][
         #     self._scaling_subseq_index]
+                                     
         self_similar = series_t ** self.hurst_parameter * lamp_fgn[self._lamperti_subseq_index]
 
         if is_plot:
